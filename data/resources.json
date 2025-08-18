@@ -1,0 +1,30 @@
+[
+  {
+    "id": 1,
+    "title": "Confissão de Fé de Westminster - Texto Original",
+    "description": "Documento original da Confissão de Fé em português",
+    "url": "https://example.com/confession.pdf",
+    "type": "pdf"
+  },
+  {
+    "id": 2,
+    "title": "Catecismo Maior Comentado",
+    "description": "Comentários detalhados sobre o Catecismo Maior",
+    "url": "https://example.com/larger-catechism-commentary",
+    "type": "book"
+  },
+  {
+    "id": 3,
+    "title": "Catecismo Menor para Crianças",
+    "description": "Versão adaptada do Catecismo Menor para ensino infantil",
+    "url": "https://example.com/shorter-catechism-children",
+    "type": "pdf"
+  },
+  {
+    "id": 4,
+    "title": "História da Assembleia de Westminster",
+    "description": "Contexto histórico da elaboração dos documentos",
+    "url": "https://example.com/westminster-history",
+    "type": "website"
+  }
+]
