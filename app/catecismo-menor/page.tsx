@@ -57,7 +57,7 @@ export default function ShorterCatechismPage() {
               content={question.answer}
               references={question.scriptureReferences}
               isCompleted={progress.shorterCatechism.includes(question.id)}
-              onClick={() => markShorterCatechismAsRead(question.id)}
+              onMarkAsRead={() => markShorterCatechismAsRead(question.id)}
             />
           ))}
         </div>
@@ -65,7 +65,7 @@ export default function ShorterCatechismPage() {
         {filteredContent.length === 0 && (
           <div className="text-center py-12">
             <p className="text-muted-foreground">
-              Nenhum resultado encontrado para "{searchQuery}".
+              Nenhum resultado encontrado para &quot;{searchQuery}&quot;.
             </p>
           </div>
         )}

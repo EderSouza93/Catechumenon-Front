@@ -65,7 +65,7 @@ export default function ConfessionPage() {
                     content={article.text}
                     references={article.scriptureReferences}
                     isCompleted={progress.confessionChapters.includes(chapter.id)}
-                    onClick={() => markConfessionChapterAsRead(chapter.id)}
+                    onMarkAsRead={() => markConfessionChapterAsRead(chapter.id)}
                   />
                 ))}
               </div>
@@ -76,7 +76,7 @@ export default function ConfessionPage() {
         {filteredContent.length === 0 && (
           <div className="text-center py-12">
             <p className="text-muted-foreground">
-              Nenhum resultado encontrado para "{searchQuery}".
+              Nenhum resultado encontrado para &quot;{searchQuery}&quot;.
             </p>
           </div>
         )}

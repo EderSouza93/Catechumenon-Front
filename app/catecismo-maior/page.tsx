@@ -57,7 +57,7 @@ export default function LargerCatechismPage() {
               content={question.answer}
               references={question.scriptureReferences}
               isCompleted={progress.largerCatechism.includes(question.id)}
-              onClick={() => markLargerCatechismAsRead(question.id)}
+              onMarkAsRead={() => markLargerCatechismAsRead(question.id)}
             />
           ))}
         </div>
@@ -65,7 +65,7 @@ export default function LargerCatechismPage() {
         {filteredContent.length === 0 && (
           <div className="text-center py-12">
             <p className="text-muted-foreground">
-              Nenhum resultado encontrado para "{searchQuery}".
+              Nenhum resultado encontrado para &quot;{searchQuery}&quot;.
             </p>
           </div>
         )}
