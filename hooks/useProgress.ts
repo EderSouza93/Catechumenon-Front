@@ -52,10 +52,30 @@ export function useProgress() {
     updateProgress(newProgress);
   };
 
+  const resetProgress = () => {
+    const initialProgress = {
+      confessionChapters: [],
+      largerCatechism: [],
+      shorterCatechism: []
+    };
+    setProgress(initialProgress);
+    localStorage.removeItem('westminster-progress');
+  };
+
+  const markAllAsRead = (type: keyof ReadingProgress, allItemIds: number[]) => {
+    const newProgress = {
+      ...progress,
+      [type]: allItemIds,
+    };
+    updateProgress(newProgress);
+  };
+
   return {
     progress,
     markConfessionChapterAsRead,
     markLargerCatechismAsRead,
-    markShorterCatechismAsRead
+    markShorterCatechismAsRead,
+    resetProgress,
+    markAllAsRead,
   };
 }

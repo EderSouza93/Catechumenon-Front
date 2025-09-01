@@ -1,18 +1,33 @@
 'use client';
 
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import Layout from '@/components/layout/Layout';
 import SearchBar from '@/components/ui/SearchBar';
 import ContentCard from '@/components/ui/ContentCard';
 import { useProgress } from '@/hooks/useProgress';
 import confessionData from '@/data/confession.json';
 import { ConfessionChapter } from '@/types';
+import { Button } from '@/components/ui/button';
+import { CheckCheck } from 'lucide-react';
+import { useSearchParams } from 'next/navigation';
 
 export default function ConfessionPage() {
   const [searchQuery, setSearchQuery] = useState('');
-  const { progress, markConfessionChapterAsRead } = useProgress();
+  const { progress, markConfessionChapterAsRead, markAllAsRead } = useProgress();
+  const searchParams = useSearchParams();
 
   const confession = confessionData as ConfessionChapter[];
+  const allChapterIds = confession.map(c => c.id);
+
+  useEffect(() => {
+    const chapterId = searchParams.get('q');
+    if (chapterId) {
+      const element = document.getElementById(chapterId);
+      if (element) {
+        element.scrollIntoView({ behavior: 'smooth' });
+      }
+    }
+  }, [searchParams]);
 
   const filteredContent = useMemo(() => {
     if (!searchQuery.trim()) return confession;
@@ -25,6 +40,10 @@ export default function ConfessionPage() {
       return titleMatch || articleMatch;
     });
   }, [searchQuery, confession]);
+
+  const handleMarkAllAsRead = () => {
+    markAllAsRead('confessionChapters', allChapterIds);
+  };
 
   return (
     <Layout>
@@ -40,19 +59,23 @@ export default function ConfessionPage() {
             do cristianismo reformado.
           </p>
           
-          <div className="max-w-md mx-auto">
+          <div className="max-w-md mx-auto flex gap-2">
             <SearchBar
               onSearch={setSearchQuery}
               placeholder="Buscar na Confissão de Fé..."
               value={searchQuery}
             />
+            <Button onClick={handleMarkAllAsRead} variant="outline">
+              <CheckCheck className="mr-2 h-4 w-4" />
+              Marcar todos como lido
+            </Button>
           </div>
         </div>
 
         {/* Content Grid */}
         <div className="space-y-8">
           {filteredContent.map((chapter) => (
-            <div key={chapter.id} className="space-y-6">
+            <div key={chapter.id} id={chapter.id.toString()} className="space-y-6">
               <h2 className="text-2xl font-bold text-foreground border-b border-border pb-3">
                 Capítulo {chapter.id}: {chapter.title}
               </h2>
@@ -61,11 +84,14 @@ export default function ConfessionPage() {
                 {chapter.articles.map((article) => (
                   <ContentCard
                     key={`${chapter.id}-${article.id}`}
+                    id={chapter.id}
                     title={`Artigo ${article.id}`}
                     content={article.text}
                     references={article.scriptureReferences}
                     isCompleted={progress.confessionChapters.includes(chapter.id)}
                     onMarkAsRead={() => markConfessionChapterAsRead(chapter.id)}
+                    searchQuery={searchQuery}
+                    baseUrl="/confissao"
                   />
                 ))}
               </div>

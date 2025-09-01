@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { Menu, X, Book, Search, Sun, Moon } from 'lucide-react';
+import { Menu, X, Book, Settings } from 'lucide-react';
 import { useTheme } from 'next-themes';
 import { Button } from '@/components/ui/button';
 
@@ -50,21 +50,14 @@ export default function Navbar() {
           </div>
 
           <div className="flex items-center space-x-2">
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
-            >
-              {mounted ? (
-                theme === 'dark' ? (
-                  <Sun className="h-4 w-4" />
-                ) : (
-                  <Moon className="h-4 w-4" />
-                )
-              ) : (
-                <div className="h-4 w-4" />
-              )}
-            </Button>
+            <Link href="/configuracoes">
+              <Button
+                variant="ghost"
+                size="sm"
+              >
+                <Settings className="h-4 w-4" />
+              </Button>
+            </Link>
 
             {/* Mobile menu button */}
             <div className="md:hidden">
@@ -98,6 +91,13 @@ export default function Navbar() {
                 {item.name}
               </Link>
             ))}
+            <Link
+              href="/configuracoes"
+              className="block px-3 py-2 text-base font-medium text-muted-foreground hover:text-foreground hover:bg-muted rounded-md transition-colors"
+              onClick={() => setIsOpen(false)}
+            >
+              Configurações
+            </Link>
           </div>
         </div>
       )}

@@ -1,18 +1,33 @@
 'use client';
 
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import Layout from '@/components/layout/Layout';
 import SearchBar from '@/components/ui/SearchBar';
 import ContentCard from '@/components/ui/ContentCard';
 import { useProgress } from '@/hooks/useProgress';
 import shorterCatechismData from '@/data/shorter-catechism.json';
 import { CatechismQuestion } from '@/types';
+import { Button } from '@/components/ui/button';
+import { CheckCheck } from 'lucide-react';
+import { useSearchParams } from 'next/navigation';
 
 export default function ShorterCatechismPage() {
   const [searchQuery, setSearchQuery] = useState('');
-  const { progress, markShorterCatechismAsRead } = useProgress();
+  const { progress, markShorterCatechismAsRead, markAllAsRead } = useProgress();
+  const searchParams = useSearchParams();
 
   const catechism = shorterCatechismData as CatechismQuestion[];
+  const allQuestionIds = catechism.map(q => q.id);
+
+  useEffect(() => {
+    const questionId = searchParams.get('q');
+    if (questionId) {
+      const element = document.getElementById(questionId);
+      if (element) {
+        element.scrollIntoView({ behavior: 'smooth' });
+      }
+    }
+  }, [searchParams]);
 
   const filteredContent = useMemo(() => {
     if (!searchQuery.trim()) return catechism;
@@ -23,6 +38,10 @@ export default function ShorterCatechismPage() {
       return questionMatch || answerMatch;
     });
   }, [searchQuery, catechism]);
+
+  const handleMarkAllAsRead = () => {
+    markAllAsRead('shorterCatechism', allQuestionIds);
+  };
 
   return (
     <Layout>
@@ -38,12 +57,16 @@ export default function ShorterCatechismPage() {
             através de 107 perguntas e respostas essenciais.
           </p>
           
-          <div className="max-w-md mx-auto">
+          <div className="max-w-md mx-auto flex gap-2">
             <SearchBar
               onSearch={setSearchQuery}
               placeholder="Buscar no Catecismo Menor..."
               value={searchQuery}
             />
+            <Button onClick={handleMarkAllAsRead} variant="outline">
+              <CheckCheck className="mr-2 h-4 w-4" />
+              Marcar todos como lido
+            </Button>
           </div>
         </div>
 
@@ -52,12 +75,15 @@ export default function ShorterCatechismPage() {
           {filteredContent.map((question) => (
             <ContentCard
               key={question.id}
+              id={question.id}
               title={`Pergunta ${question.id}`}
               subtitle={question.question}
               content={question.answer}
               references={question.scriptureReferences}
               isCompleted={progress.shorterCatechism.includes(question.id)}
               onMarkAsRead={() => markShorterCatechismAsRead(question.id)}
+              searchQuery={searchQuery}
+              baseUrl="/catecismo-menor"
             />
           ))}
         </div>

@@ -2,9 +2,22 @@
 
 import { useEffect, useState } from 'react';
 import { Progress } from '@/components/ui/progress';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { CheckCircle, Book, HelpCircle } from 'lucide-react';
+import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
+import { CheckCircle, Book, HelpCircle, RotateCcw } from 'lucide-react';
 import { ReadingProgress } from '@/types';
+import { Button } from './button';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from './alert-dialog';
+import { useProgress } from '@/hooks/useProgress';
 
 interface ProgressTrackerProps {
   totalConfessionChapters: number;
@@ -17,18 +30,7 @@ export default function ProgressTracker({
   totalLargerCatechism,
   totalShorterCatechism
 }: ProgressTrackerProps) {
-  const [progress, setProgress] = useState<ReadingProgress>({
-    confessionChapters: [],
-    largerCatechism: [],
-    shorterCatechism: []
-  });
-
-  useEffect(() => {
-    const savedProgress = localStorage.getItem('westminster-progress');
-    if (savedProgress) {
-      setProgress(JSON.parse(savedProgress));
-    }
-  }, []);
+  const { progress, resetProgress } = useProgress();
 
   const confessionProgress = (progress.confessionChapters.length / totalConfessionChapters) * 100;
   const largerCatechismProgress = (progress.largerCatechism.length / totalLargerCatechism) * 100;
@@ -38,6 +40,10 @@ export default function ProgressTracker({
     (progress.confessionChapters.length + progress.largerCatechism.length + progress.shorterCatechism.length) /
     (totalConfessionChapters + totalLargerCatechism + totalShorterCatechism)
   ) * 100;
+
+  const handleResetProgress = () => {
+    resetProgress();
+  };
 
   return (
     <Card>
@@ -98,6 +104,28 @@ export default function ProgressTracker({
           </div>
         </div>
       </CardContent>
+      <CardFooter className="flex justify-end">
+        <AlertDialog>
+          <AlertDialogTrigger asChild>
+            <Button variant="destructive" size="sm">
+              <RotateCcw className="mr-2 h-4 w-4" />
+              Zerar Progresso
+            </Button>
+          </AlertDialogTrigger>
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle>Você tem certeza?</AlertDialogTitle>
+              <AlertDialogDescription>
+                Essa ação não pode ser desfeita. Isso irá apagar permanentemente o seu progresso de estudos.
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel>Cancelar</AlertDialogCancel>
+              <AlertDialogAction onClick={handleResetProgress}>Continuar</AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
+      </CardFooter>
     </Card>
   );
 }
