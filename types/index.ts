@@ -8,6 +8,13 @@ export interface Article {
   id: number;
   text: string;
   scriptureReferences?: string[];
+  sections?: Section[];
+}
+
+export interface Section {
+  title: string;
+  books: string[] | string[][];
+  columns?: number;
 }
 
 export interface CatechismQuestion {

@@ -5,13 +5,72 @@
     "articles": [
       {
         "id": 1,
-        "text": "A luz da natureza e as obras da criação e da providência manifestam a bondade, a sabedoria e o poder de Deus, de tal modo que os homens ficam inescusáveis; contudo não são suficientes para dar aquele conhecimento de Deus e da sua vontade, necessário para a salvação.",
-        "scriptureReferences": ["Rm 2:14,15", "Rm 1:19,20", "Sl 19:1-3", "Rm 1:32", "1Co 1:21", "1Co 2:13,14"]
+        "text": "Ainda que a luz da natureza e as obras da criação e da providência de tal modo manifestem a bondade, a sabedoria e o poder de Deus, que os homens ficam inescusáveis, contudo não são suficientes para dar aquele conhecimento de Deus e da sua vontade necessário para a salvação; por isso foi o Senhor servido, em diversos tempos e diferentes modos, revelar-se e declarar à sua Igreja aquela sua vontade; e depois, para melhor preservação e propagação da verdade, para o mais seguro estabelecimento e conforto da Igreja contra a corrupção da carne e malícia de Satanás e do mundo, foi igualmente servido fazê-la escrever toda. Isto torna indispensável a Escritura Sagrada, tendo cessado aqueles antigos modos de revelar Deus a sua vontade ao seu povo.",
+        "scriptureReferences": ["Sl 19:1-4", "Rm 1:32", "Rm 2:1", "Rm 1:19-20", "Rm 2:14-15", "1Co 1:21", "1Co 2:13-14", "Hb 1:1-2", "Lc 1:3-4", "Rm 15:4", "Mt 4:4, 7, 10", "Is 8:20", "2Tm 3:15", "2Pe 1:19"]
       },
       {
         "id": 2,
-        "text": "Por isso foi o Senhor servido, em diversos tempos e diferentes modos, revelar-se e declarar à sua Igreja aquela sua vontade; e depois, para melhor preservação e propagação da verdade, para mais seguro estabelecimento e conforto da Igreja contra a corrupção da carne e malícia de Satanás e do mundo, foi igualmente servido fazê-la escrever toda.",
-        "scriptureReferences": ["Hb 1:1", "Pv 22:19-21", "Lc 1:3,4", "Rm 15:4", "Mt 4:4,7,10", "Is 8:19,20"]
+        "text": "Sob o nome de Escritura Sagrada, ou Palavra de Deus escrita, incluem-se agora todos os livros do Velho e do Novo Testamento, que são os seguintes, todos dados por inspiração de Deus para serem a regra de fé e de prática: ",
+        "sections": [
+          {
+            "title": "O ANTIGO TESTAMENTO",
+            "books": [
+              ["Gênesis", "Êxodo", "Levítico", "Números", "Deuteronômio", "Josué", "Juízes", "Rute", "1 Samuel", "2 Samuel", "1 Reis", "2 Reis", "1 Crônicas"],
+              ["2 Crônicas", "Esdras", "Neemias", "Ester", "Jó", "Salmos", "Provérbios", "Eclesiastes", "Cantares", "Isaías", "Jeremias", "Lamentações", "Ezequiel"],
+              ["Daniel", "Oséias", "Joel", "Amós", "Obadias", "Jonas", "Miquéias", "Naum", "Habacuque", "Sofonias", "Ageu", "Zacarias", "Malaquias"]
+            ]
+            },
+            {
+              "title": "O NOVO TESTAMENTO",
+              "books": [
+                ["Mateus", "Marcos", "Lucas", "João", "Atos", "Romanos", "1 Coríntios", "2 Coríntios", "Gálatas", "Efésios", "Filipenses", "Colossenses"],
+                ["1 Tessalonicenses", "2 Tessalonicenses", "1 Timóteo", "2 Timóteo", "Tito", "Filemom", "Hebreus", "Tiago", "1 Pedro", "2 Pedro", "1 João", "2 João"],
+                ["3 João", "Judas", "Apocalipse"]
+              ]
+            }
+          ],
+
+        "scriptureReferences": ["Ef 2:20", "Ap 22:18-19", "2Tm 3:16", "Mt 11:27"]
+      },
+      {
+        "id": 3,
+        "text": "Os livros geralmente chamados Apócrifos, não sendo de inspiração divina, não fazem parte do cânon da Escritura; não são, portanto, de autoridade na Igreja de Deus, nem de modo algum podem ser aprovados ou empregados senão como escritos humanos.",
+        "scriptureReferences": ["Lc 24:27,44", "Rm 3:2", "2Pe 1:21"]
+      },
+      {
+        "id": 4,
+        "text": "A autoridade da Escritura Sagrada, razão pela qual deve ser crida e obedecida, não depende do testemunho de qualquer homem ou igreja, mas depende somente de Deus (a mesma verdade) que é o seu autor; tem, portanto, de ser recebida, porque é a palavra de Deus.",
+        "scriptureReferences": ["2Tm 3:16", "1Jo 5:9", "1Ts 2:13"]
+      },
+      {
+        "id": 5,
+        "text": "Pelo testemunho da Igreja podemos ser movidos e incitados a um alto e reverente apreço da Escritura Sagrada; a suprema excelência do seu conteúdo, e eficácia da sua doutrina, a majestade do seu estilo, a harmonia de todas as suas partes, o escopo do seu todo (que é dar a Deus toda a glória), a plena revelação que faz do único meio de salvar-se o homem, as suas muitas outras excelências incomparáveis e completa perfeição, são argumentos pelos quais abundantemente se evidencia ser ela a palavra de Deus; contudo, a nossa plena persuasão e certeza da sua infalível verdade e divina autoridade provém da operação interna do Espírito Santo, que pela palavra e com a palavra testifica em nossos corações.",
+        "scriptureReferences": ["1Tm 3:15", "1Jo 2:20,27", "Jo 16:13-14", "1Co 2:10-12"]
+      },
+      {
+        "id": 6,
+        "text": "Todo o conselho de Deus concernente a todas as coisas necessárias para a glória dele e para a salvação, fé e vida do homem, ou é expressamente declarado na Escritura ou pode ser lógica e claramente deduzido dela. À Escritura nada se acrescentará em tempo algum, nem por novas revelações do Espírito, nem por tradições dos homens; reconhecemos, entretanto, ser necessária a íntima iluminação do Espírito de Deus para a salvadora compreensão das coisas reveladas na palavra, e que há algumas circunstâncias, quanto ao culto de Deus e ao governo da Igreja, comum às ações e sociedades humanas, as quais têm de ser ordenadas pela luz da natureza e pela prudência cristã, segundo as regras gerais da palavra, que sempre devem ser observadas.",
+        "scriptureReferences": ["2Tm 3:15-17", "Gl 1:8", "2Ts 2:2", "Jo 6:45", "2Co 2:9, 10, 12", "1Co 11:13-14"]
+      },
+      {
+        "id": 7,
+        "text": "Na Escritura não são todas as coisas igualmente claras em si, nem do mesmo modo evidentes a todos; contudo, as coisas que precisam ser obedecidas, cridas e observadas para a salvação, em um ou outro passo da Escritura são tão claramente expostas e explicadas, que não só os doutos, mas ainda os indoutos, no devido uso dos meios ordinários, podem alcançar uma suficiente compreensão delas.",
+        "scriptureReferences": ["2Pe 3:16", "Sl 119:105, 130", "At 17:11"]
+      },
+      {
+        "id": 8,
+        "text": "O Velho Testamento em Hebraico (língua vulgar do antigo povo de Deus) e o Novo Testamento em Grego (a língua mais geralmente conhecida entre as nações no tempo em que ele foi escrito), sendo inspirados imediatamente por Deus e pelo seu singular cuidado e providência conservados puros em todos os séculos, são por isso autênticos e assim em todas as controvérsias religiosas a Igreja deve apelar para eles como para um supremo tribunal; mas, não sendo essas línguas conhecidas por todo o povo de Deus, que tem direito e interesse nas Escrituras e que deve no temor de Deus lê-las e estudá-las, esses livros têm de ser traduzidos nas línguas vulgares de todas as nações aonde chegarem, a fim de que a palavra de Deus, permanecendo nelas abundantemente, adorem a Deus de modo aceitável e possuam a esperança pela paciência e conforto das escrituras.",
+        "scriptureReferences": ["Mt 5:18", "Is 8:20", "2Tm 3:14-15", "1Co 14: 6, 9, 11, 12, 24, 27-28", "Cl 3:16", "Rm 15:4"]
+      },
+      {
+        "id": 9,
+        "text": "A regra infalível de interpretação da Escritura é a mesma Escritura; portanto, quando houver questão sobre o verdadeiro e pleno sentido de qualquer texto da Escritura (sentido que não é múltiplo, mas único), esse texto pode ser estudado e compreendido por outros textos que falem mais claramente.",
+        "scriptureReferences": ["At 15:15", "Jo 5:46", "2Pe 1:20-21"]
+      },
+      {
+        "id": 10,
+        "text": "O Juiz Supremo, pelo qual todas as controvérsias religiosas têm de ser determinadas e por quem serão examinados todos os decretos de concílios, todas as opiniões dos antigos escritores, todas as doutrinas de homens e opiniões particulares, o Juiz Supremo em cuja sentença nos devemos firmar não pode ser outro senão o Espírito Santo falando na Escritura.",
+        "scriptureReferences": ["Mt 22:29, 3, 1", "At 28:25", "Gl 1: 10"]
       }
     ]
   },
@@ -21,14 +80,88 @@
     "articles": [
       {
         "id": 1,
-        "text": "Há um só Deus, o único vivo e verdadeiro, que é infinito em seu ser e perfeições, espírito puríssimo, invisível, sem corpo, membros ou paixões, imutável, imenso, eterno, incompreensível, todo-poderoso, infinitamente sábio, santíssimo, completamente livre e absoluto.",
-        "scriptureReferences": ["Dt 6:4", "1Co 8:4,6", "1Ts 1:9", "Jr 10:10", "Jó 11:7-9", "Jó 26:14"]
+        "text": "Há um só Deus vivo e verdadeiro, o qual é infinito em seu ser e perfeições. Ele é um espírito puríssimo, invisível, sem corpo, membros ou paixões; é imutável, imenso, eterno, incompreensível, - onipotente, onisciente, santíssimo, completamente livre e absoluto, fazendo tudo para a sua própria glória e segundo o conselho da sua própria vontade, que é reta e imutável. É cheio de amor, é gracioso, misericordioso, longânimo, muito bondoso e verdadeiro remunerador dos que o buscam e, contudo, justíssimo e terrível em seus juízos, pois odeia todo o pecado; de modo algum terá por inocente o culpado.",
+        "scriptureReferences": ["Dt 6:4", "1Co 8:4, 6", "1Ts 1:9", "Jr 10:10", "Jó 11:79", "Jó 26:14", "Jo 6:24", "1Tm 1:17", "Dt 4:15-16", "Lc 24:39", "At 14:11, 15", "Tg 1:17", "1Rs 8:27", "Sl 92:2", "Sl 145:3", "Gn 17:1", "Rm 16:27", "Is 6:3", "Sl 115:3", "Êx 3:14", "Ef 1:11", "Pv 16:4", "Rm 11:36", "Ap 4:11", "1Jo 4:8", "Êx 36:6-7", "Hb 11:6", "Ne 9:32-33", "Sl 5:5-6", "Na 1:2-3"]
       },
       {
         "id": 2,
-        "text": "Deus tem em si mesmo, e de si mesmo, toda vida, glória, bondade e bem-aventurança. Ele é todo-suficiente em si e para si, não precisando das criaturas que fez, não derivando delas glória alguma, mas somente manifestando a sua glória nelas, por elas, para elas e sobre elas.",
-        "scriptureReferences": ["Jo 5:26", "At 7:2", "1Tm 6:15", "At 17:24,25", "Jó 22:2,3"]
+        "text": "Deus tem em si mesmo, e de si mesmo, toda a vida, glória, bondade e bem-aventurança. Ele é todo suficiente em si e para si, pois não precisa das criaturas que trouxe à existência, não deriva delas glória alguma, mas somente manifesta a sua glória nelas, por elas, para elas e sobre elas. Ele é a única origem de todo o ser; dele, por ele e para ele são todas as coisas e sobre elas tem ele soberano domínio para fazer com elas, para elas e sobre elas tudo quanto quiser. Todas as coisas estão patentes e manifestas diante dele; o seu saber é infinito, infalível e independente da criatura, de sorte que para ele nada é contingente ou incerto. Ele é santíssimo em todos os seus conselhos, em todas as suas obras e em todos os seus preceitos. Da parte dos anjos e dos homens e de qualquer outra criatura lhe são devidos todo o culto, todo o serviço e obediência, que ele há por bem requerer deles.",
+        "scriptureReferences": ["Jo 5:26", "At 7:2", "Sl 119:68", "1Tm 6: 15", "At 17:24-25", "Rm 11:36", "Ap 4:11", "Hb 4:13", "Rm 11:33-34", "At 15:18", "Pv 15:3", "Sl 145-17", "Ap 5: 12-14"]
+      },
+      {
+        "id": 3,
+        "text": "Na unidade da Divindade há três pessoas de uma mesma substância, poder e eternidade - Deus o Pai, Deus o Filho e Deus o Espírito Santo, O Pai não é de ninguém - não é nem gerado, nem procedente; o Filho é eternamente gerado do Pai; o Espírito Santo é eternamente procedente do Pai e do Filho.",
+        "scriptureReferences": ["Mt 3:16-17, 28-19", "2Co 13:14", "Jo 1:14, 18", "Jo 15:26", "Gl 4:6"]
       }
+    ]
+  },
+  {
+     "id": 3,
+    "title": "Dos Eternos decretos de Deus",
+    "articles": [
+      {
+        "id": 1,
+        "text": "Desde toda a eternidade, Deus, pelo muito sábio e santo conselho da sua própria vontade, ordenou livre e inalteravelmente tudo quanto acontece, porém de modo que nem Deus é o autor do pecado, nem violentada é a vontade da criatura, nem é tirada a liberdade ou contingência das causas secundárias, antes estabelecidas.",
+        "scriptureReferences": ["Is 45:6-7", "Rm 11:33", "Hb 6:17", "Sl 5:4", "Tg 1:13-17", "1Jo 1:5", "Mt 17:2", "Jo 19:11", "At 2:23", "At 4:27-28", "At 27:23, 24, 34"]
+      },
+      {
+        "id": 2,
+        "text": "Ainda que Deus sabe tudo quanto pode ou há de acontecer em todas as circunstâncias imagináveis, ele não decreta coisa alguma por havê-la previsto como futura, ou como coisa que havia de acontecer em tais e tais condições.",
+        "scriptureReferences": ["At 15:18", "Pv 16:33",  "1Sm. 23:11-12", "Mt 11:21-23", "Rm 9:11-18"]
+      },
+      {
+        "id": 3,
+        "text": "Pelo decreto de Deus e para manifestação da sua glória, alguns homens e alguns anjos são predestinados para a vida eterna e outros preordenados para a morte eterna.",
+        "scriptureReferences": ["1Tm 5:21", "Mc 5:38", "Jd 6", "Mt 25:31, 41", "Pv 16:4", "Rm. 9:22-23", "Ef. 1:5-6"]
+      },
+      {
+        "id": 4,
+        "text": "Esses homens e esses anjos, assim predestinados e preordenados, são particular e imutavelmente designados; o seu número é tão certo e definido, que não pode ser nem aumentado nem diminuído.",
+        "scriptureReferences": ["Jo 10: 14-16, 27-28", "Jo 13:18", "2Tm 2:19"]
+      },
+      {
+        "id": 5,
+        "text": "Segundo o seu eterno e imutável propósito e segundo o santo conselho e beneplácito da sua vontade, Deus antes que fosse o mundo criado, escolheu em Cristo para a glória eterna os homens que são predestinados para a vida; para o louvor da sua gloriosa graça, ele os escolheu de sua mera e livre graça e amor, e não por previsão de fé, ou de boas obras e perseverança nelas, ou de qualquer outra coisa na criatura que a isso o movesse, como condição ou causa.",
+        "scriptureReferences": ["Ef 1:4, 9, 11", "Rm 8:30", "2Tm 1:9", "1Ts 5:9", "Rm 9:11-16", "Ef 1: 19", "Ef 2:8-9"]
+      },
+      {
+        "id": 6,
+        "text": "Assim como Deus destinou os eleitos para a glória, assim também, pelo eterno e mui livre propósito da sua vontade, preordenou todos os meios conducentes a esse fim; os que, portanto, são eleitos, achando-se caídos em Adão, são remidos por Cristo, são eficazmente chamados para a fé em Cristo pelo seu Espírito, que opera no tempo devido, são justificados, adotados, santificados e guardados pelo seu poder por meio da fé salvadora. Além dos eleitos não há nenhum outro que seja remido por Cristo, eficazmente chamado, justificado, adotado, santificado e salvo.",
+        "scriptureReferences": ["1Pe 1:2", "Ef 1:4", "Ef 2: 10", "2Ts 2:13", "1Ts 5:9-10", "Tt 2:14", "Rm 8:30", "Ef 1:5", "1Pe 1:5", "Jo 6:64-65", "Jo 17:9", "Rm 8:28", "1Jo 2:19"]
+      },
+      {
+        "id": 7,
+        "text": "Segundo o inescrutável conselho da sua própria vontade, pela qual ele concede ou recusa misericórdia, como lhe apraz, para a glória do seu soberano poder sobre as suas criaturas, o resto dos homens, para louvor da sua gloriosa justiça, foi Deus servido não contemplar e ordená-los para a desonra e ira por causa dos seus pecados.",
+        "scriptureReferences": ["Mt 11:25-26", "Rm 9:17-22", "2Tm 2:20", "Jd 4", "2Pe 2:8"]
+      },
+      {
+        "id": 8,
+        "text": "A doutrina deste alto mistério de predestinação deve ser tratada com especial prudência e cuidado, a fim de que os homens, atendendo à vontade revelada em sua palavra e prestando obediência a ela, possam, pela evidência da sua vocação eficaz, certificar-se da sua eterna eleição. Assim, a todos os que sinceramente obedecem ao Evangelho esta doutrina fornece motivo de louvor, reverência e admiração de Deus, bem como de humildade diligência e abundante consolação.",
+        "scriptureReferences": ["Rm 9:20", "Rm 11:23", "Dt 29:29", "2Pe 1:10", "Ef 1:6", "Lc 10:20", "Rm 5:33", "Rm 11:5-6, 10"]
+      }
+    ]
+  },
+  {
+    "id": 4,
+    "title": "Da Criação",
+    "articles": [
+      {
+        "id": 1,
+        "text": "Ao princípio aprouve a Deus o Pai, o Filho e o Espírito Santo, para a manifestação da glória do seu eterno poder, sabedoria e bondade, criar ou fazer do nada, no espaço de seis dias, e tudo muito bom, o mundo e tudo o que nele há, visíveis ou invisíveis.",
+        "scriptureReferences": ["Rm 9:36", "Hb 1:2", "Jo 1:2-3", "Rm 1:20", "Sl 104:24", "Jr 10:12", "Gn 1", "At 17:24", "Cl 1:16", "Êx 20:11"]
+      },
+      {
+        "id": 2,
+        "text": "Depois de haver feito as outras criaturas, Deus criou o homem, macho e fêmea, com almas racionais e imortais, e dotou-as de inteligência, retidão e perfeita santidade, segundo a sua própria imagem, tendo a lei de Deus escrita em seus corações, e o poder de cumpri-la, mas com a possibilidade de transgredi-la, sendo deixados à liberdade da sua própria vontade, que era mutável. Além dessa escrita em seus corações, receberam o preceito de não comerem da árvore da ciência do bem e do mal; enquanto obedeceram a este preceito, foram felizes em sua comunhão com Deus e tiveram domínio sobre as criaturas.",
+        "scriptureReferences": ["Gn 1:27", "Gn 2:7", "Sl 8:5", "Ec 12:7", "Mt 10:28", "Rm 2:14, 15", "Cl 3:10", "Gn 3:6"]
+      }
+    ]
+  },
+  {
+    "id": 5,
+    "title": "Da Providência",
+    "articles": [
+
     ]
   }
 ]
