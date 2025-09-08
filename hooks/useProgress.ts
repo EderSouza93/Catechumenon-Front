@@ -1,61 +1,92 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { ReadingProgress } from '@/types';
+import { ConfessionChapter, ReadingProgress } from '@/types';
+import confessionData from '@/data/confession.json';
 
 export function useProgress() {
   const [progress, setProgress] = useState<ReadingProgress>({
     confessionChapters: [],
+    confessionSections: [],
     largerCatechism: [],
     shorterCatechism: []
   });
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    const savedProgress = localStorage.getItem('westminster-progress');
-    if (savedProgress) {
-      setProgress(JSON.parse(savedProgress));
+    try {
+      const savedProgress = localStorage.getItem('westminster-progress');
+      if (savedProgress) {
+        const parsedProgress = JSON.parse(savedProgress);
+        if (
+          parsedProgress.confessionChapters &&
+          parsedProgress.confessionSections &&
+          parsedProgress.largerCatechism &&
+          parsedProgress.shorterCatechism
+        ) {
+          setProgress(parsedProgress);
+        }
+      }
+    } catch (error) {
+      console.error("Failed to parse progress from localStorage", error);
+    } finally {
+      setIsLoading(false);
     }
   }, []);
 
-  const updateProgress = (newProgress: ReadingProgress) => {
+  const updateAndSaveProgress = (newProgress: ReadingProgress) => {
     setProgress(newProgress);
     localStorage.setItem('westminster-progress', JSON.stringify(newProgress));
   };
 
-  const markConfessionChapterAsRead = (chapterId: number) => {
-    const newProgress = {
-      ...progress,
-      confessionChapters: progress.confessionChapters.includes(chapterId)
-        ? progress.confessionChapters.filter(id => id !== chapterId)
-        : [...progress.confessionChapters, chapterId]
-    };
-    updateProgress(newProgress);
+  const toggleProgressItem = (
+    key: 'largerCatechism' | 'shorterCatechism',
+    questionId: number
+  ) => {
+    const list = progress[key];
+    const newList = list.includes(questionId)
+      ? list.filter(id => id !== questionId)
+      : [...list, questionId];
+    
+    updateAndSaveProgress({ ...progress, [key]: newList });
   };
 
-  const markLargerCatechismAsRead = (questionId: number) => {
-    const newProgress = {
-      ...progress,
-      largerCatechism: progress.largerCatechism.includes(questionId)
-        ? progress.largerCatechism.filter(id => id !== questionId)
-        : [...progress.largerCatechism, questionId]
-    };
-    updateProgress(newProgress);
-  };
+  const toggleConfessionSectionAsRead = (chapterId: number, articleId: number) => {
+    const sectionKey = `${chapterId}-${articleId}`;
+    const newSections = progress.confessionSections.includes(sectionKey)
+      ? progress.confessionSections.filter(id => id !== sectionKey)
+      : [...progress.confessionSections, sectionKey];
 
-  const markShorterCatechismAsRead = (questionId: number) => {
-    const newProgress = {
+    const chapter = (confessionData as ConfessionChapter[]).find(c => c.id === chapterId);
+    let newChapters = [...progress.confessionChapters];
+
+    if (chapter) {
+      const allArticlesInChapter = chapter.articles.map(a => `${chapter.id}-${a.id}`);
+      const allArticlesRead = allArticlesInChapter.every(key => newSections.includes(key));
+
+      if (allArticlesRead) {
+        if (!newChapters.includes(chapterId)) {
+          newChapters.push(chapterId);
+        }
+      } else {
+        newChapters = newChapters.filter(id => id !== chapterId);
+      }
+    }
+    
+    updateAndSaveProgress({
       ...progress,
-      shorterCatechism: progress.shorterCatechism.includes(questionId)
-        ? progress.shorterCatechism.filter(id => id !== questionId)
-        : [...progress.shorterCatechism, questionId]
-    };
-    updateProgress(newProgress);
+      confessionSections: newSections,
+      confessionChapters: newChapters,
+    });
   };
 
   return {
     progress,
-    markConfessionChapterAsRead,
-    markLargerCatechismAsRead,
-    markShorterCatechismAsRead
+    isLoading,
+    toggleConfessionSectionAsRead,
+    markLargerCatechismAsRead: (questionId: number) =>
+      toggleProgressItem('largerCatechism', questionId),
+    markShorterCatechismAsRead: (questionId: number) =>
+      toggleProgressItem('shorterCatechism', questionId),
   };
 }

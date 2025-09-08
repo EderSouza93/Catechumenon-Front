@@ -7,10 +7,11 @@ import ContentCard from '@/components/ui/ContentCard';
 import { useProgress } from '@/hooks/useProgress';
 import largerCatechismData from '@/data/larger-catechism.json';
 import { CatechismQuestion } from '@/types';
+import { Skeleton } from '@/components/ui/skeleton';
 
 export default function LargerCatechismPage() {
   const [searchQuery, setSearchQuery] = useState('');
-  const { progress, markLargerCatechismAsRead } = useProgress();
+  const { progress, markLargerCatechismAsRead, isLoading } = useProgress();
 
   const catechism = largerCatechismData as CatechismQuestion[];
 
@@ -23,6 +24,14 @@ export default function LargerCatechismPage() {
       return questionMatch || answerMatch;
     });
   }, [searchQuery, catechism]);
+
+  const renderSkeletons = () => (
+    <div className="grid gap-6 md:grid-cols-1 lg:grid-cols-2">
+      {[...Array(6)].map((_, i) => (
+        <Skeleton key={i} className="h-56 w-full rounded-xl" />
+      ))}
+    </div>
+  );
 
   return (
     <Layout>
@@ -47,45 +56,49 @@ export default function LargerCatechismPage() {
           </div>
         </div>
 
-        {/* Content Grid */}
-        <div className="grid gap-6 md:grid-cols-1 lg:grid-cols-2">
-          {filteredContent.map((question) => (
-            <ContentCard
-              key={question.id}
-              title={`Pergunta ${question.id}`}
-              subtitle={question.question}
-              content={question.answer}
-              references={question.scriptureReferences}
-              isCompleted={progress.largerCatechism.includes(question.id)}
-              onMarkAsRead={() => markLargerCatechismAsRead(question.id)}
-            />
-          ))}
-        </div>
-
-        {filteredContent.length === 0 && (
-          <div className="text-center py-12">
-            <p className="text-muted-foreground">
-              Nenhum resultado encontrado para &quot;{searchQuery}&quot;.
-            </p>
-          </div>
-        )}
-
-        {/* Summary */}
-        <div className="mt-16 text-center">
-          <div className="bg-muted/50 rounded-lg p-8">
-            <p className="text-sm text-muted-foreground mb-4">
-              Perguntas estudadas: {progress.largerCatechism.length} de {catechism.length}
-            </p>
-            <div className="w-full bg-muted rounded-full h-2">
-              <div 
-                className="bg-green-600 h-2 rounded-full transition-all duration-300"
-                style={{ 
-                  width: `${(progress.largerCatechism.length / catechism.length) * 100}%` 
-                }}
-              ></div>
+        {isLoading ? renderSkeletons() : (
+          <>
+            {/* Content Grid */}
+            <div className="grid gap-6 md:grid-cols-1 lg:grid-cols-2">
+              {filteredContent.map((question) => (
+                <ContentCard
+                  key={question.id}
+                  title={`Pergunta ${question.id}`}
+                  subtitle={question.question}
+                  content={question.answer}
+                  references={question.scriptureReferences}
+                  isCompleted={progress.largerCatechism.includes(question.id)}
+                  onMarkAsRead={() => markLargerCatechismAsRead(question.id)}
+                />
+              ))}
             </div>
-          </div>
-        </div>
+
+            {filteredContent.length === 0 && (
+              <div className="text-center py-12">
+                <p className="text-muted-foreground">
+                  Nenhum resultado encontrado para &quot;{searchQuery}&quot;.
+                </p>
+              </div>
+            )}
+
+            {/* Summary */}
+            <div className="mt-16 text-center">
+              <div className="bg-muted/50 rounded-lg p-8">
+                <p className="text-sm text-muted-foreground mb-4">
+                  Perguntas estudadas: {progress.largerCatechism.length} de {catechism.length}
+                </p>
+                <div className="w-full bg-muted rounded-full h-2">
+                  <div 
+                    className="bg-green-600 h-2 rounded-full transition-all duration-300"
+                    style={{ 
+                      width: `${(progress.largerCatechism.length / catechism.length) * 100}%` 
+                    }}
+                  ></div>
+                </div>
+              </div>
+            </div>
+          </>
+        )}
       </div>
     </Layout>
   );
