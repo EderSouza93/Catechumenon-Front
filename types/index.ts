@@ -34,6 +34,7 @@ export interface Resource {
 
 export interface ReadingProgress {
   confessionChapters: number[];
+  confessionSections: string[];
   largerCatechism: number[];
   shorterCatechism: number[];
 }

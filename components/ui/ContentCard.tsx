@@ -25,7 +25,6 @@ interface ContentCardProps {
 /** Normaliza books em colunas */
 function toColumns(books: BooksInput, columns = 3): string[][] {
   if (Array.isArray(books) && books.length > 0 && Array.isArray(books[0])) {
-    // já é string[][]
     return books as string[][];
   }
   const flat = (books as string[]).filter(Boolean);
