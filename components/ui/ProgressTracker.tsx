@@ -19,6 +19,7 @@ export default function ProgressTracker({
 }: ProgressTrackerProps) {
   const [progress, setProgress] = useState<ReadingProgress>({
     confessionChapters: [],
+    confessionSections: [],
     largerCatechism: [],
     shorterCatechism: []
   });
