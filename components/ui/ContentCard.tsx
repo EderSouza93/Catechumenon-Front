@@ -4,6 +4,8 @@ import { useMemo, useState } from 'react';
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogTitle, DialogTrigger, DialogHeader, DialogFooter } from '@/components/ui/dialog';
 import { ScrollArea } from '@/components/ui/scroll-area';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { getBibleApiUrl } from '@/lib/bibleUtils';
 
 type BooksInput = string[] | string[][];
 interface Section {
@@ -59,6 +61,70 @@ function SectionGrid({ section }: { section: Section }) {
   );
 }
 
+const ReferencePopover = ({ reference }: { reference: string }) => {
+  const [content, setContent] = useState<string | null>("Carregando...");
+  const [isOpen, setIsOpen] = useState(false);
+
+  const fetchVerse = async () => {
+    if (content !== "Carregando...") return;
+    try {
+      const apiUrl = getBibleApiUrl(reference);
+      if (!apiUrl || !apiUrl.includes("reference=")) {
+        throw new Error("Referência inválida.");
+      }
+
+      const response = await fetch(apiUrl);
+      const data = await response.json();
+
+      if (!response.ok) {
+        const errorMessage = data?.error || `HTTP error! status: ${response.status}`;
+        throw new Error(errorMessage);
+      }
+
+      if (data.text) {
+        setContent(data.text.trim());
+      } else {
+        setContent("O texto para esta referência não foi encontrado.");
+      }
+    } catch (error) {
+      console.error(`Erro ao buscar a referência "${reference}":`, error);
+      setContent(`Falha ao carregar. ${error instanceof Error ? error.message : 'Erro desconhecido'}`);
+    }
+  };
+
+  return (
+    <Popover open={isOpen} onOpenChange={setIsOpen}>
+      <PopoverTrigger asChild>
+        <Button
+          variant="outline"
+          size="sm"
+          className="text-xs h-auto px-2 py-1"
+          onClick={(e) => {
+            e.stopPropagation();
+            fetchVerse();
+          }}
+        >
+          {reference}
+        </Button>
+      </PopoverTrigger>
+      <PopoverContent
+        onClick={(e) => e.stopPropagation()} // Impede que o clique feche o dialog principal
+        className="w-80"
+      >
+        <div className="grid gap-4">
+          <div className="space-y-2">
+            <h4 className="font-medium leading-none">{reference}</h4>
+            <p className="text-sm text-muted-foreground whitespace-pre-wrap">
+              {content}
+            </p>
+          </div>
+        </div>
+      </PopoverContent>
+    </Popover>
+  );
+};
+
+
 export default function ContentCard({
   title,
   content,
@@ -97,9 +163,7 @@ export default function ContentCard({
           <p className="text-xs text-muted-foreground mb-2">Referências:</p>
           <div className="flex flex-wrap gap-1">
             {references.map((ref, index) => (
-              <Badge key={index} variant="outline" className="text-xs">
-                {ref}
-              </Badge>
+              <ReferencePopover key={index} reference={ref} />
             ))}
           </div>
         </div>
