@@ -6,12 +6,13 @@ import { Dialog, DialogContent, DialogTitle, DialogTrigger, DialogHeader, Dialog
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { getBibleApiUrl } from '@/lib/bibleUtils';
+import HighlightText from '@/components/ui/HighlightText';
 
 type BooksInput = string[] | string[][];
 interface Section {
   title: string;
-  books: BooksInput;        
-  columns?: number;     
+  books: BooksInput;
+  columns?: number;
 }
 
 interface ContentCardProps {
@@ -22,6 +23,7 @@ interface ContentCardProps {
   references?: string[];
   isCompleted?: boolean;
   onMarkAsRead?: (read: boolean) => void;
+  searchQuery?: string;
 }
 
 /** Normaliza books em colunas */
@@ -132,7 +134,8 @@ export default function ContentCard({
   subtitle,
   references,
   isCompleted = false,
-  onMarkAsRead
+  onMarkAsRead,
+  searchQuery = '',
 }: ContentCardProps) {
   const [open, setOpen] = useState(false);
   const [read, setRead] = useState(isCompleted);
@@ -153,7 +156,7 @@ export default function ContentCard({
     <>
       {content && (
         <p className="text-sm text-muted-foreground leading-relaxed mb-4 whitespace-pre-line">
-          {content}
+          <HighlightText text={content} query={searchQuery} />
         </p>
       )}
       {hasSections && sections!.map((s, i) => <SectionGrid key={i} section={s} />)}
@@ -184,10 +187,12 @@ export default function ContentCard({
             <div className="flex items-start justify-between">
               <div>
                 <CardTitle className="text-lg font-semibold text-foreground">
-                  {title}
+                  <HighlightText text={title} query={searchQuery} />
                 </CardTitle>
                 {subtitle && (
-                  <p className="text-sm text-muted-foreground mt-1">{subtitle}</p>
+                  <p className="text-sm text-muted-foreground mt-1">
+                    <HighlightText text={subtitle} query={searchQuery} />
+                  </p>
                 )}
               </div>
               {read && (
@@ -214,7 +219,9 @@ export default function ContentCard({
         </DialogHeader>
 
         {subtitle && (
-          <p className="text-sm text-muted-foreground mt-1">{subtitle}</p>
+          <p className="text-sm text-muted-foreground mt-1">
+            <HighlightText text={subtitle} query={searchQuery} />
+          </p>
         )}
 
         <ScrollArea className="max-h-[70vh] pr-6">

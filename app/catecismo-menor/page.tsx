@@ -60,7 +60,7 @@ export default function ShorterCatechismPage() {
           
           <div className="max-w-md mx-auto">
             <SearchBar
-              onSearch={setSearchQuery}
+              onSearch={(q) => { setSearchQuery(q); setCurrentPage(1); }}
               placeholder="Buscar no Catecismo Menor..."
               value={searchQuery}
             />
@@ -80,6 +80,7 @@ export default function ShorterCatechismPage() {
                   references={question.scriptureReferences}
                   isCompleted={progress.shorterCatechism.includes(question.id)}
                   onMarkAsRead={() => markShorterCatechismAsRead(question.id)}
+                  searchQuery={searchQuery}
                 />
               ))}
             </div>
