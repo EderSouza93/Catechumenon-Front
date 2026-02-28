@@ -8,8 +8,8 @@ import { useProgress } from '@/hooks/useProgress';
 import confessionData from '@/data/confession.json';
 import { ConfessionChapter } from '@/types';
 import { paginate } from '@/utils/paginate';
-import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
+import PaginationControls from '@/components/ui/PaginationControls';
 
 export default function ConfessionPage() {
   const [searchQuery, setSearchQuery] = useState('');
@@ -107,29 +107,13 @@ export default function ConfessionPage() {
               </div>
 
               {/* Paginação */}
-              <div className='mt-8 flex justify-center space-x-4'>
-                <Button
-                  disabled={currentPage === 1}
-                  onClick={() => setCurrentPage(currentPage - 1)}
-                  className={`px-4 py-2 rounded transition-colors duration-200 
-                    ${currentPage === 1 ? 'bg-gray-300 text-gray-500 cursor-not-allowed' : 'bg-amber-600 text-white hover:bg-amber-700'}
-                  `}
-                >
-                  Anterior
-                </Button>
-                <span>
-                  Página {currentPage} de {totalPages}
-                </span>
-                <Button
-                  disabled={currentPage === totalPages}
-                  onClick={() => setCurrentPage(currentPage + 1)}
-                  className={`px-4 py-2 rounded transition-colors duration-200 
-                    ${currentPage === totalPages ? 'bg-gray-300 text-gray-500 cursor-not-allowed' : 'bg-amber-600 text-white hover:bg-amber-700'}
-                  `}
-                >
-                  Próximo
-                </Button>
-              </div>
+              {filteredContent.length > 0 && (
+                <PaginationControls
+                  currentPage={currentPage}
+                  totalPages={totalPages}
+                  onPageChange={setCurrentPage}
+                />
+              )}
 
               {filteredContent.length === 0 && (
                 <div className="text-center py-12">

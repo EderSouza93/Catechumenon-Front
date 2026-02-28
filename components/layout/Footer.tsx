@@ -75,7 +75,7 @@ export default function Footer() {
 
         <div className="mt-8 pt-8 border-t border-border">
           <p className="text-center text-xs text-muted-foreground">
-            © 2025 Catechumenon Study Platform. Desenvolvido para a glória de Deus.
+            © {new Date().getFullYear()} Catechumenon Study Platform. Desenvolvido para a glória de Deus.
           </p>
         </div>
       </div>

@@ -23,7 +23,7 @@ export default function HighlightText({
   return (
     <span className={className}>
       {parts.map((part, i) =>
-        regex.test(part) ? (
+        part.toLowerCase() === query.trim().toLowerCase() ? (
           <mark key={i} className={highlightClassName}>
             {part}
           </mark>
