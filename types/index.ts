@@ -38,3 +38,22 @@ export interface ReadingProgress {
   largerCatechism: number[];
   shorterCatechism: number[];
 }
+
+export interface User {
+  id: string;
+  name: string;
+  email: string;
+  avatar?: string;
+  role: 'user' | 'admin';
+}
+
+export interface LoginCredentials {
+  email: string;
+  password: string;
+}
+
+export interface AuthResponse {
+  success: boolean;
+  user?: User;
+  error?: string;
+}

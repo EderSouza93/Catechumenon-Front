@@ -2,13 +2,28 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { Menu, X, Book, Search, Sun, Moon } from 'lucide-react';
+import { usePathname } from 'next/navigation';
+import { Menu, X, Book, Search, Sun, Moon, LogIn, LogOut, User as UserIcon } from 'lucide-react';
 import { useTheme } from 'next-themes';
+import { useAuth } from '@/contexts/AuthProvider';
 import { Button } from '@/components/ui/button';
+import { Avatar, AvatarFallback } from '@/components/ui/avatar';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 import GlobalSearch from '@/components/search/GlobalSearch';
+import { cn } from '@/lib/utils';
 
-const navigation = [
+const publicNavigation = [
   { name: 'Início', href: '/' },
+];
+
+const authenticatedNavigation = [
+  { name: 'Dashboard', href: '/dashboard' },
   { name: 'Confissão de Fé', href: '/confissao' },
   { name: 'Catecismo Maior', href: '/catecismo-maior' },
   { name: 'Catecismo Menor', href: '/catecismo-menor' },
@@ -20,6 +35,10 @@ export default function Navbar() {
   const [searchOpen, setSearchOpen] = useState(false);
   const [mounted, setMounted] = useState(false);
   const { theme, setTheme } = useTheme();
+  const { user, isAuthenticated, isLoading, logout } = useAuth();
+  const pathname = usePathname();
+
+  const navigation = isAuthenticated ? authenticatedNavigation : publicNavigation;
 
   useEffect(() => {
     setMounted(true);
@@ -51,12 +70,17 @@ export default function Navbar() {
             </div>
 
             {/* Desktop Navigation */}
-            <div className="hidden md:flex items-center space-x-8">
+            <div className="hidden md:flex items-center space-x-6">
               {navigation.map((item) => (
                 <Link
                   key={item.name}
                   href={item.href}
-                  className="text-muted-foreground hover:text-foreground transition-colors text-sm font-medium"
+                  className={cn(
+                    'text-sm font-medium transition-colors py-1',
+                    pathname === item.href
+                      ? 'text-amber-600 border-b-2 border-amber-600'
+                      : 'text-muted-foreground hover:text-foreground'
+                  )}
                 >
                   {item.name}
                 </Link>
@@ -64,34 +88,40 @@ export default function Navbar() {
             </div>
 
             <div className="flex items-center space-x-2">
-              {/* Desktop search button */}
-              <Button
-                variant="outline"
-                size="sm"
-                className="hidden md:inline-flex items-center gap-2 text-muted-foreground"
-                onClick={() => setSearchOpen(true)}
-              >
-                <Search className="h-4 w-4" />
-                <span className="text-sm">Buscar...</span>
-                <kbd className="pointer-events-none ml-1 inline-flex h-5 select-none items-center gap-1 rounded border bg-muted px-1.5 font-mono text-[10px] font-medium text-muted-foreground">
-                  Ctrl K
-                </kbd>
-              </Button>
+              {/* Search buttons - only when authenticated */}
+              {isAuthenticated && (
+                <>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="hidden md:inline-flex items-center gap-2 text-muted-foreground"
+                    onClick={() => setSearchOpen(true)}
+                    aria-label="Abrir busca"
+                  >
+                    <Search className="h-4 w-4" />
+                    <span className="text-sm">Buscar...</span>
+                    <kbd className="pointer-events-none ml-1 inline-flex h-5 select-none items-center gap-1 rounded border bg-muted px-1.5 font-mono text-[10px] font-medium text-muted-foreground">
+                      Ctrl K
+                    </kbd>
+                  </Button>
 
-              {/* Mobile search button */}
-              <Button
-                variant="ghost"
-                size="sm"
-                className="md:hidden"
-                onClick={() => setSearchOpen(true)}
-              >
-                <Search className="h-4 w-4" />
-              </Button>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="md:hidden"
+                    onClick={() => setSearchOpen(true)}
+                    aria-label="Abrir busca"
+                  >
+                    <Search className="h-4 w-4" />
+                  </Button>
+                </>
+              )}
 
               <Button
                 variant="ghost"
                 size="sm"
                 onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
+                aria-label={mounted && theme === 'dark' ? 'Ativar modo claro' : 'Ativar modo escuro'}
               >
                 {mounted ? (
                   theme === 'dark' ? (
@@ -104,12 +134,52 @@ export default function Navbar() {
                 )}
               </Button>
 
+              {/* Auth section */}
+              {!isLoading && (
+                isAuthenticated ? (
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <Button variant="ghost" size="sm" className="flex items-center gap-2">
+                        <Avatar className="h-7 w-7">
+                          <AvatarFallback className="bg-amber-100 text-amber-800 dark:bg-amber-900 dark:text-amber-200 text-xs">
+                            {user?.name?.charAt(0).toUpperCase()}
+                          </AvatarFallback>
+                        </Avatar>
+                        <span className="hidden lg:inline text-sm font-medium">
+                          {user?.name}
+                        </span>
+                      </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end">
+                      <DropdownMenuItem disabled>
+                        <UserIcon className="mr-2 h-4 w-4" />
+                        {user?.email}
+                      </DropdownMenuItem>
+                      <DropdownMenuSeparator />
+                      <DropdownMenuItem onClick={logout}>
+                        <LogOut className="mr-2 h-4 w-4" />
+                        Sair
+                      </DropdownMenuItem>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
+                ) : (
+                  <Button asChild size="sm" className="bg-amber-600 hover:bg-amber-700">
+                    <Link href="/login">
+                      <LogIn className="mr-2 h-4 w-4" />
+                      <span className="hidden sm:inline">Entrar</span>
+                    </Link>
+                  </Button>
+                )
+              )}
+
               {/* Mobile menu button */}
               <div className="md:hidden">
                 <Button
                   variant="ghost"
                   size="sm"
                   onClick={() => setIsOpen(!isOpen)}
+                  aria-label={isOpen ? 'Fechar menu' : 'Abrir menu'}
+                  aria-expanded={isOpen}
                 >
                   {isOpen ? (
                     <X className="h-5 w-5" />
@@ -130,7 +200,12 @@ export default function Navbar() {
                 <Link
                   key={item.name}
                   href={item.href}
-                  className="block px-3 py-2 text-base font-medium text-muted-foreground hover:text-foreground hover:bg-muted rounded-md transition-colors"
+                  className={cn(
+                    'block px-3 py-2 text-base font-medium rounded-md transition-colors',
+                    pathname === item.href
+                      ? 'text-amber-600 bg-amber-50 dark:bg-amber-900/20'
+                      : 'text-muted-foreground hover:text-foreground hover:bg-muted'
+                  )}
                   onClick={() => setIsOpen(false)}
                 >
                   {item.name}
@@ -141,7 +216,9 @@ export default function Navbar() {
         )}
       </nav>
 
-      <GlobalSearch open={searchOpen} onOpenChange={setSearchOpen} />
+      {isAuthenticated && (
+        <GlobalSearch open={searchOpen} onOpenChange={setSearchOpen} />
+      )}
     </>
   );
 }
