@@ -3,28 +3,28 @@
     "id": 1,
     "title": "Confissão de Fé de Westminster - Texto Original",
     "description": "Documento original da Confissão de Fé em português",
-    "url": "https://example.com/confession.pdf",
+    "url": "https://www.executivaipb.com.br/arquivos/confissao_de_westminster.pdf",
     "type": "pdf"
   },
   {
     "id": 2,
     "title": "Catecismo Maior Comentado",
     "description": "Comentários detalhados sobre o Catecismo Maior",
-    "url": "https://example.com/larger-catechism-commentary",
-    "type": "book"
+    "url": "https://www.ipb.org.br/content/Arquivos/Catecismo_Maior_de_Westminster.pdf",
+    "type": "pdf"
   },
   {
     "id": 3,
     "title": "Catecismo Menor para Crianças",
     "description": "Versão adaptada do Catecismo Menor para ensino infantil",
-    "url": "https://example.com/shorter-catechism-children",
+    "url": "https://www.ipb.org.br/content/Arquivos/Breve_Catecismo_de_Westminster.pdf",
     "type": "pdf"
   },
   {
     "id": 4,
     "title": "História da Assembleia de Westminster",
     "description": "Contexto histórico da elaboração dos documentos",
-    "url": "https://example.com/westminster-history",
+    "url": "https://www.ipb.org.br/conteudos_detalhe?conteudo=1122",
     "type": "website"
   }
 ]

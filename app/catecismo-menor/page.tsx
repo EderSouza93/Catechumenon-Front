@@ -14,7 +14,7 @@ import { Button } from '@/components/ui/button';
 export default function ShorterCatechismPage() {
   const [searchQuery, setSearchQuery] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
-  const pageSize = 6;
+  const pageSize = 10
 
   const { progress, markShorterCatechismAsRead, isLoading } = useProgress();
 
