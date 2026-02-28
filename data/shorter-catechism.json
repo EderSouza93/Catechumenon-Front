@@ -3,25 +3,25 @@
     "id": 1,
     "question": "Qual é o fim principal do homem?",
     "answer": "O fim principal do homem é glorificar a Deus, e gozá-lo para sempre.",
-    "scriptureReferences": ["Rm 11.36", "1Co 10.31", "Sl 73.25-26", "Is 43.7", "Rm 14.7-8", "Ef 1.5-6", "Is 60.21", "61.3"]
+    "scriptureReferences": ["Rm 11.36", "1Co 10.31", "Sl 73.25-26", "Is 43.7", "Rm 14.7-8", "Ef 1.5-6", "Is 60.21", "Is 61.3"]
   },
   {
     "id": 2,
     "question": "Que regra deu Deus para nos dirigir na maneira de o glorificar e gozar?",
     "answer": "A Palavra de Deus, que se acha nas Escrituras do Velho e do Novo Testamentos, é a única regra para nos dirigir na maneira de o glorificar e gozar.",
-    "scriptureReferences": ["Lc 24.27, 44", "2Pe 3.2, 15-16", "2Tm 3.15-17", "Lc 16.29-31", "Gl 1.8-9", "Jo 15.10-11", "Is 8.20", "Hb 1:1 comparado com Lc 1.1-4 e Jo 20.30-31"]
+    "scriptureReferences": ["Lc 24.27", "Lc 24.44", "2Pe 3.2", "2Pe 3.15-16", "2Tm 3.15-17", "Lc 16.29-31", "Gl 1.8-9", "Jo 15.10-11", "Is 8.20", "Hb 1.1", "Lc 1.1-4", "Jo 20.30-31"]
   },
   {
     "id": 3,
     "question": "Qual é a coisa principal que as Escrituras nos ensinam?",
     "answer": "A coisa principal que as Escrituras nos ensinam é o que o homem deve crer acerca de Deus, o dever que Deus requer do homem.",
-    "scriptureReferences": ["Jo 5.39", "20.31", "Sl 119.105", "Rm 15.4", "1Co 10.11"]
+    "scriptureReferences": ["Jo 5.39", "Jo 20.31", "Sl 119.105", "Rm 15.4", "1Co 10.11"]
   },
   {
     "id": 4,
     "question": "Quem é Deus?",
     "answer": "Deus é espírito, infinito, eterno e imutável em seu ser, sabedoria, poder, santidade, justiça, bondade e verdade.",
-    "scriptureReferences": ["Jo 4.24", "Êx 3.14", "Sl 145.3", "90.2", "Tg 1.17", "Rm 11.33", "Gn 17.1", "Ap 4.8", "Êx 34.6-7"]
+    "scriptureReferences": ["Jo 4.24", "Êx 3.14", "Sl 145.3", "Sl 90.2", "Tg 1.17", "Rm 11.33", "Gn 17.1", "Ap 4.8", "Êx 34.6-7"]
   },
   {
     "id": 5,
@@ -33,19 +33,19 @@
     "id": 6,
     "question": "Quantas pessoas há na Divindade?",
     "answer": "Há três pessoas na Divindade: o Pai, o Filho e o Espírito Santo, e estas três são um Deus, da mesma substância, iguais em poder e glória.",
-    "scriptureReferences": ["Mt 3.16-17", "28.19", "2Co 13.13", "Jo 1.1", "3.18", "At 5.3-4", "Hb 1.3", "Jo 10.30"]
+    "scriptureReferences": ["Mt 3.16-17", "Mt 28.19", "2Co 13.13", "Jo 1.1", "Jo 3.18", "At 5.3-4", "Hb 1.3", "Jo 10.30"]
   },
   {
     "id": 7,
     "question": "Que são os decretos de Deus?",
     "answer": "Os decretos de Deus são o seu eterno propósito, segundo o conselho da sua vontade, pelo qual, para sua própria glória, Ele predestinou tudo o que acontece.",
-    "scriptureReferences": ["Rm 11.36", "Ef 1.4-6, 11", "At 2.23", "17.26", "Jo 21.19", "Is 44.28", "At 13.48", "1Co 2.7", "Ef 3.10-11"]
+    "scriptureReferences": ["Rm 11.36", "Ef 1.4-6", "Ef 1.11", "At 2.23", "At 17.26", "Jo 21.19", "Is 44.28", "At 13.48", "1Co 2.7", "Ef 3.10-11"]
   },
   {
     "id": 8,
     "question": "Como executa Deus os seus decretos?",
     "answer": "Deus executa os seus decretos nas obras da criação e da providência.",
-    "scriptureReferences": ["Ap 4.11", "Dn 4.35", "Is 40.26", "14.26-27", "46.9-11", "At 4.24"]
+    "scriptureReferences": ["Ap 4.11", "Dn 4.35", "Is 40.26", "Is 14.26-27", "Is 46.9-11", "At 4.24"]
   },
   {
     "id": 9,
@@ -57,13 +57,13 @@
     "id": 10,
     "question": "Como criou Deus o homem?",
     "answer": "Deus criou o homem macho e fêmea, conforme a sua própria imagem, em conhecimento, retidão e santidade com domínio sobre as criaturas.",
-    "scriptureReferences": ["Gn 1.27-28", "Cl 3.10", "Ef 4.24", "Rm 2.14-15", "Sl 86-8"]
+    "scriptureReferences": ["Gn 1.27-28", "Cl 3.10", "Ef 4.24", "Rm 2.14-15", "Sl 8.6"]
   },
   {
     "id": 11,
     "question": "Quais são as obras da providência de Deus?",
     "answer": "As obras da providência de Deus são a sua maneira muito santa, sábia e poderosa de preservar e governar todas as suas criaturas, e todas as ações delas.",
-    "scriptureReferences": ["Sl 145.17", "104.10-24", "Hb 1.3", "Mt 10.29-30", "Os 2.6"]
+    "scriptureReferences": ["Sl 145.17", "Sl 104.10-24", "Hb 1.3", "Mt 10.29-30", "Os 2.6"]
   },
   {
     "id": 12,
@@ -81,7 +81,7 @@
     "id": 14,
     "question": "Que é pecado?",
     "answer": "Pecado é qualquer falta de conformidade com a lei de Deus, ou qualquer transgressão desta lei.",
-    "scriptureReferences": ["Tg 2.10", "4.17", "1Jo 3.4"]
+    "scriptureReferences": ["Tg 2.10", "Tg 4.17", "1Jo 3.4"]
   },
   {
     "id": 15,
@@ -111,13 +111,13 @@
     "id": 19,
     "question": "Qual é a miséria do estado em que o homem caiu?",
     "answer": "Todo o gênero humano pela sua queda perdeu comunhão com Deus, está debaixo da sua ira e maldição, e assim sujeito a todas as misérias nesta vida, à morte e às penas do Inferno para sempre.",
-    "scriptureReferences": ["Gn 3.8, 24", "Ef 2.3", "Rm 6.23", "Mt 25.41-46"]
+    "scriptureReferences": ["Gn 3.8", "Gn 3.24", "Ef 2.3", "Rm 6.23", "Mt 25.41-46"]
   },
   {
     "id": 20,
     "question": "Deixou Deus todo o gênero humano perecer no estado de pecado e miséria?",
     "answer": "Tendo Deus, unicamente pela sua boa vontade desde toda a eternidade, escolhido alguns para a vida eterna, entrou com eles em um pacto de graça, para os livrar do estado de pecado e miséria, e trazer a um estado de salvação por meio de um Redentor.",
-    "scriptureReferences": ["Ef 1.4", "Tt 1.2", "3.4-7", "Jo 17.6"]
+    "scriptureReferences": ["Ef 1.4", "Tt 1.2", "Tt 3.4-7", "Jo 17.6"]
   },
   {
     "id": 21,
@@ -129,7 +129,7 @@
     "id": 22,
     "question": "Como Cristo, sendo o Filho de Deus, se fez homem?",
     "answer": "Cristo, o Filho de Deus, fez-se homem tomando um verdadeiro corpo, e uma alma racional, sendo concebido pelo poder do Espírito Santo no ventre da virgem Maria, e nascido dela, mas sem pecado.",
-    "scriptureReferences": ["Hb 2.14", "Mt 26.38", "Lc 2.52", "1.31, 35", "Hb 4.15"]
+    "scriptureReferences": ["Hb 2.14", "Mt 26.38", "Lc 2.52", "Lc 1.31", "Lc 1.35", "Hb 4.15"]
   },
   {
     "id": 23,
@@ -147,19 +147,19 @@
     "id": 25,
     "question": "Como exerce Cristo as funções de sacerdote?",
     "answer": "Cristo exerce as funções de sacerdote, oferecendo-se a si mesmo uma vez em sacrifício, para satisfazer a justiça divina, reconciliar-nos com Deus e fazendo contínua intercessão por nós.",
-    "scriptureReferences": ["Hb 9.28", "Rm 3.24-26", "10.4", "Hb 2.17", "7.25", "Is 53.12"]
+    "scriptureReferences": ["Hb 9.28", "Rm 3.24-26", "Rm 10.4", "Hb 2.17", "Hb 7.25", "Is 53.12"]
   },
   {
     "id": 26,
     "question": "Como exerce Cristo as funções de rei?",
     "answer": "Cristo exerce as funções de rei, sujeitando-nos a si mesmo, governando-nos e protegendo-nos, contendo e subjugando todos os seus e os nossos inimigos.",
-    "scriptureReferences": ["Sl 110.3", "At 2.36", "18.9-10", "Is 9.6-7", "1Co 15.26-27"]
+    "scriptureReferences": ["Sl 110.3", "At 2.36", "At 18.9-10", "Is 9.6-7", "1Co 15.26-27"]
   },
   {
     "id": 27,
     "question": "Em que consistiu a humilhação de Cristo?",
     "answer": "A humilhação de Cristo consistiu em Ele nascer, e isso em condição baixa, feito sujeito à lei; em sofrer as misérias desta vida, a ira de Deus e amaldiçoada morte na cruz; em ser sepultado, e permanecer debaixo do poder da morte durante certo tempo.",
-    "scriptureReferences": ["Lc 2.7", "Fp 2.6-8", "Gl 4.4", "3.13", "Is 53.3", "Mt 27.43", "1Co 15.3-4"]
+    "scriptureReferences": ["Lc 2.7", "Fp 2.6-8", "Gl 4.4", "Gl 3.13", "Is 53.3", "Mt 27.43", "1Co 15.3-4"]
   },
   {
     "id": 28,
@@ -171,7 +171,7 @@
     "id": 29,
     "question": "Como nos tornamos participantes da redenção adquirida por Cristo?",
     "answer": "Tornamo-nos participantes da redenção adquirida por Cristo pela eficaz aplicação dela a nós pelo Seu Santo Espírito.",
-    "scriptureReferences": ["Jo 1.12", "3.5-6", "Tt 3.5-6"]
+    "scriptureReferences": ["Jo 1.12", "Jo 3.5-6", "Tt 3.5-6"]
   },
   {
     "id": 30,
@@ -183,7 +183,7 @@
     "id": 31,
     "question": "Que é vocação eficaz?",
     "answer": "Vocação eficaz é a obra do Espírito Santo, pela qual, convencendo-nos do nosso pecado, e da nossa miséria, iluminando nossos entendimentos pelo conhecimento de Cristo, e renovando a nossa vontade, nos persuade e habilita a abraçar Jesus Cristo, que nos é oferecido de graça no Evangelho.",
-    "scriptureReferences": ["1Ts 2.13", "At 2.37", "26.18", "Ez 36.25-27", "2Tm 1.9", "Fp 2.13", "Jo 6.37, 44-45"]
+    "scriptureReferences": ["1Ts 2.13", "At 2.37", "At 26.18", "Ez 36.25-27", "2Tm 1.9", "Fp 2.13", "Jo 6.37", "Jo 6.44-45"]
   },
   {
     "id": 32,
@@ -213,13 +213,13 @@
     "id": 36,
     "question": "Quais são as bênçãos que nesta vida acompanham a justificação, adoção e santificação ou delas procedem?",
     "answer": "As bênçãos que nesta vida acompanham a justificação, adoção e santificação, ou delas procedem, são: certeza do amor de Deus, paz de consciência, gozo no Espírito Santo, aumento de graça, e perseverança nela até ao fim.",
-    "scriptureReferences": ["Rm 5.1-5", "14.17", "Jo 1.16", "Fp 1.6", "1Pe 1.5"]
+    "scriptureReferences": ["Rm 5.1-5", "Rm 14.17", "Jo 1.16", "Fp 1.6", "1Pe 1.5"]
   },
   {
     "id": 37,
     "question": "Quais são as bênçãos que os fiéis recebem de Cristo na hora da morte?",
     "answer": "As almas dos fiéis na hora da morte são aperfeiçoadas em santidade, e imediatamente entram na glória; e os corpos que continuam unidos Cristo, descansam na sepultura até a ressurreição.",
-    "scriptureReferences": ["Ap 14.13", "Lc 23.43", "At 7.55, 59", "Fp 1.23", "1Ts 4.14", "Jo 5.28-29", "14.2-3", "Hb 12.22-23"]
+    "scriptureReferences": ["Ap 14.13", "Lc 23.43", "At 7.55", "At 7.59", "Fp 1.23", "1Ts 4.14", "Jo 5.28-29", "Jo 14.2-3", "Hb 12.22-23"]
   },
   {
     "id": 38,
@@ -249,7 +249,7 @@
     "id": 42,
     "question": "Em que se resumem os dez mandamentos?",
     "answer": "Os dez mandamentos se resumem em amar ao Senhor nosso Deus de todo o nosso coração, de toda a nossa alma, de todas as nossas forças e de todo o nosso entendimento; e ao nosso próximo como a nós mesmos.",
-    "scriptureReferences": ["Mt 22-37-40"]
+    "scriptureReferences": ["Mt 22.37-40"]
   },
   {
     "id": 43,
@@ -279,7 +279,7 @@
     "id": 47,
     "question": "Que proíbe o primeiro mandamento?",
     "answer": "O primeiro mandamento proíbe o negar, ou deixar de adorar ou glorificar ao verdadeiro Deus, como Deus, e nosso Deus; e dar a qualquer outro a adoração e a glória que só a Ele são devidas.",
-    "scriptureReferences": ["Sl 14.1", "Rm 1.20-21, 25", "Sl 8.11"]
+    "scriptureReferences": ["Sl 14.1", "Rm 1.20-21", "Rm 1.25", "Sl 81.11"]
   },
   {
     "id": 48,
@@ -309,7 +309,7 @@
     "id": 52,
     "question": "Quais são as razões anexas ao segundo mandamento?",
     "answer": "As razões anexas ao segundo mandamento são a soberania de Deus sobre nós, a sua propriedade em nós em nós, e o zelo que Ele tem pelo seu culto.",
-    "scriptureReferences": ["Sl 45.11", "100.3", "Êx 34.14", "1Co 10.22"]
+    "scriptureReferences": ["Sl 45.11", "Sl 100.3", "Êx 34.14", "1Co 10.22"]
   },
   {
     "id": 53,
@@ -321,7 +321,7 @@
     "id": 54,
     "question": "Que exige o terceiro mandamento?",
     "answer": "O terceiro mandamento exige o santo e reverente uso dos nomes, títulos, atributos, ordenanças, palavras e obras de Deus.",
-    "scriptureReferences": ["Sl 29,2", "Ap 15.3-4", "Ec 5.1", "Sl 138.2", "104.24"]
+    "scriptureReferences": ["Sl 29.2", "Ap 15.3-4", "Ec 5.1", "Sl 138.2", "Sl 104.24"]
   },
   {
     "id": 55,
@@ -339,7 +339,7 @@
     "id": 57,
     "question": "Qual é o quarto mandamento?",
     "answer": "O quarto mandamento é: “Lembra-te de santificar o dia do Sábado. Trabalharás seis dias, e farás nele tudo o que tens para fazer. O sétimo dia, porém, é o Sábado do Senhor teu Deus. Não farás nesse dia, obra alguma, nem tu, nem teu filho, nem tua filha, nem o teu servo, nem a tua serva, nem o teu animal, nem o peregrino que vive das tuas portas para dentro. Porque o Senhor fez em seis dias o céu, a terra e o mar, e tudo o que neles há, e descansou no sétimo dia. Por isso o Senhor abençoou o dia sétimo e o santificou.”",
-    "scriptureReferences": ["Êx 20. 8.11"]
+    "scriptureReferences": ["Êx 20.8-11"]
   },
   {
     "id": 58,
@@ -369,7 +369,7 @@
     "id": 62,
     "question": "Quais são as razões anexas ao quarto mandamento?",
     "answer": "As razões anexas ao quarto mandamento são: a permissão que Deus nos concede de fazermos uso dos seis dias da semana para os nossos interesses temporais; o reclamar ele para si a propriedade especial do dia sétimo, o seu próprio exemplo, e a benção que ele conferiu ao dia do descanso.",
-    "scriptureReferences": ["Êx 31. 15-16", "Lv 23.3", "Êx 31.17", "Gn 2.3"]
+    "scriptureReferences": ["Êx 31.15-16", "Lv 23.3", "Êx 31.17", "Gn 2.3"]
   },
   {
     "id": 63,
@@ -417,13 +417,13 @@
     "id": 70,
     "question": "Qual é o sétimo mandamento?",
     "answer": "O sétimo mandamento é: “Não adulterarás.”",
-    "scriptureReferences": ["Êx 24.14"]
+    "scriptureReferences": ["Êx 20.14"]
   },
   {
     "id": 71,
     "question": "Que exige o sétimo mandamento?",
     "answer": "O sétimo mandamento exige a conservação da nossa própria castidade, e da do nosso próximo, no coração, nas palavras e nos costumes.",
-    "scriptureReferences": ["1Ts 4.4", "Ef 4.29", "5.11-12", "1Pe 3.2"]
+    "scriptureReferences": ["1Ts 4.4", "Ef 4.29", "Ef 5.11-12", "1Pe 3.2"]
   },
   {
     "id": 72,
@@ -441,7 +441,7 @@
     "id": 74,
     "question": "Que exige o oitavo mandamento?",
     "answer": "O oitavo mandamento exige que procuremos o lícito adiantamento das riquezas e do estado exterior, tanto nosso como do nosso próximo.",
-    "scriptureReferences": ["Pv. 27.23", "22.1-14", "Fl 2.4", "Êx 23.4-6"]
+    "scriptureReferences": ["Pv 27.23", "Pv 22.29", "Fp 2.4", "Êx 23.4-6"]
   },
   {
     "id": 75,
@@ -579,13 +579,13 @@
     "id": 97,
     "question": "Que se exige para participar dignamente da Ceia do Senhor?",
     "answer": "Exige-se daqueles que desejam participar dignamente da Ceia do Senhor que se examine sobre o seu conhecimento em discernir o corpo do Senhor, sobre a sua fé para se alimentarem dele, sobre o seu arrependimento, amor e nova obediência; para não suceder que, vindo indignamente, comam e bebam para si a condenação.",
-    "scriptureReferences": ["1Co 11.27", "31-32", "Rm 6.17-18"]
+    "scriptureReferences": ["1Co 11.27", "1Co 11.31-32", "Rm 6.17-18"]
   },
   {
     "id": 98,
     "question": "O que é Oração?",
     "answer": "A Oração é um santo oferecimento dos nossos desejos a Deus, por coisas conformes com a sua vontade, em nome de Cristo, com a confissão dos nossos pecados, e um agradecido reconhecimento das suas misericórdias.",
-    "scriptureReferences": ["Sl 10.17", "145.19", "1Jo 5.14", "1.9", "Jo 16.23-24", "Fp 4.6"]
+    "scriptureReferences": ["Sl 10.17", "Sl 145.19", "1Jo 5.14", "1Jo 1.9", "Jo 16.23-24", "Fp 4.6"]
   },
   {
     "id": 99,
@@ -615,7 +615,7 @@
     "id": 103,
     "question": "Pelo que oramos na terceira petição?",
     "answer": "Na terceira petição, que é: “Seja feita Tua vontade, assim na terra como no Céu,” pedimos que Deus, pela sua graça, nos torne capazes e desejosos de conhecer a sua vontade, de obedecer e submeter-nos a ela em tudo, como fazem os anjos no Céu.",
-    "scriptureReferences": ["Mt 24.39", "Fp 1.9-11", "Sl 103.20-21"]
+    "scriptureReferences": ["Mt 26.39", "Fp 1.9-11", "Sl 103.20-21"]
   },
   {
     "id": 104,
