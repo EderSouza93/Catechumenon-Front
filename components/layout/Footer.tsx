@@ -78,7 +78,7 @@ export default function Footer() {
             <span className="text-muted-foreground/40 text-lg font-display">&#10053;</span>
           </div>
           <p className="text-center text-xs text-muted-foreground">
-            © 2025 Catechumenon Study Platform. Desenvolvido para a glória de Deus.
+            © {new Date().getFullYear()} Catechumenon Study Platform. Desenvolvido para a glória de Deus.
           </p>
         </div>
       </div>

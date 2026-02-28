@@ -178,7 +178,15 @@ export default function ContentCard({
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
         <Card
-          className={`cursor-pointer transition-all duration-200 hover:shadow-warm-lg ${
+          role="button"
+          tabIndex={0}
+          onKeyDown={(e: React.KeyboardEvent) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+              e.preventDefault();
+              handleClick();
+            }
+          }}
+          className={`cursor-pointer transition-all duration-200 hover:shadow-warm-lg focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 ${
             read ? 'ring-2 ring-primary/30 bg-primary/5 dark:bg-primary/10' : ''
           }`}
           onClick={handleClick}
