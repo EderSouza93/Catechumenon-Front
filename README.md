@@ -1,6 +1,6 @@
 # Catechumenon Front-End
 
-![Versão](https://img.shields.io/badge/version-0.1.0-blue)  
+![Versão](https://img.shields.io/badge/version-0.1.1-blue)  
 ![Status](https://img.shields.io/badge/status-em%20desenvolvimento-yellow)  
 ![Feature](https://img.shields.io/badge/feature-API%20Bíblia%20(alpha)-orange)
 
@@ -35,7 +35,7 @@ O projeto está atualmente na **versão 0.1.0** e em fase inicial de desenvolvim
 
 1.  **Clone o repositório:**
     ```bash
-    git clone <URL_DO_SEU_REPOSITORIO>
+    git clone https://github.com/EderSouza93/Catechumenon-Front.git
     ```
 
 2.  **Navegue até o diretório do projeto:**
@@ -59,7 +59,7 @@ O projeto está atualmente na **versão 0.1.0** e em fase inicial de desenvolvim
 
 O projeto tem um caminho claro para evolução, focado em adicionar mais interatividade e robustez.
 
--   [ ] **Integração com API da Bíblia(melhorias):**
+-   [x] **Integração com API da Bíblia(melhorias):**
     -   Verificar possíveis erros ao clicar nos versículos das referências.
 
 -   [ ] **Desenvolvimento do Back-end:**
@@ -70,7 +70,7 @@ O projeto tem um caminho claro para evolução, focado em adicionar mais interat
     -   Implementar um sistema completo de autenticação e gerenciamento de usuários.
     -   Isso abrirá caminho para funcionalidades personalizadas, como salvar anotações, marcar progresso de leitura, etc.
 
--   [ ] **Melhoria da Busca:**
+-   [x] **Melhoria da Busca:**
     -   Finalizar a implementação da busca para permitir que os usuários pesquisem termos e perguntas dentro dos documentos.
 
 ## 🤝 Contribuições
