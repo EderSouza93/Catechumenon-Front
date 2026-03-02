@@ -69,7 +69,7 @@ export default function ConfessionPage() {
             
             <div className="max-w-md mx-auto">
               <SearchBar
-                onSearch={setSearchQuery}
+                onSearch={(q) => { setSearchQuery(q); setCurrentPage(1); }}
                 placeholder="Buscar na Confissão de Fé..."
                 value={searchQuery}
               />
@@ -97,6 +97,7 @@ export default function ConfessionPage() {
                             references={article.scriptureReferences}
                             isCompleted={progress.confessionSections.includes(`${chapter.id}-${article.id}`)}
                             onMarkAsRead={() => toggleConfessionSectionAsRead(chapter.id, article.id)}
+                            searchQuery={searchQuery}
                           />
                         );
                       })}

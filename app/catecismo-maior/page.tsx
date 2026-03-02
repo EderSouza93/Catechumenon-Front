@@ -64,7 +64,7 @@ export default function LargerCatechismPage() {
 
           <div className="max-w-md mx-auto">
             <SearchBar
-              onSearch={setSearchQuery}
+              onSearch={(q) => { setSearchQuery(q); setCurrentPage(1); }}
               placeholder="Buscar no Catecismo Maior..."
               value={searchQuery}
             />
@@ -86,6 +86,7 @@ export default function LargerCatechismPage() {
                   references={question.scriptureReferences}
                   isCompleted={progress.largerCatechism.includes(question.id)}
                   onMarkAsRead={() => markLargerCatechismAsRead(question.id)}
+                  searchQuery={searchQuery}
                 />
               ))}
             </div>
