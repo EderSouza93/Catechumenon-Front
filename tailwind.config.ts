@@ -9,6 +9,11 @@ const config: Config = {
   ],
   theme: {
     extend: {
+      fontFamily: {
+        display: ['var(--font-display)', 'Georgia', 'serif'],
+        body: ['var(--font-body)', 'Georgia', 'serif'],
+        ui: ['var(--font-ui)', 'system-ui', 'sans-serif'],
+      },
       backgroundImage: {
         'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
         'gradient-conic':
@@ -60,6 +65,16 @@ const config: Config = {
           '4': 'hsl(var(--chart-4))',
           '5': 'hsl(var(--chart-5))',
         },
+        'doc-confession': 'hsl(var(--doc-confession))',
+        'doc-catecismo-maior': 'hsl(var(--doc-catecismo-maior))',
+        'doc-catecismo-menor': 'hsl(var(--doc-catecismo-menor))',
+        'doc-resources': 'hsl(var(--doc-resources))',
+      },
+      boxShadow: {
+        'warm-sm': '0 1px 2px 0 hsl(var(--shadow-color) / 0.06)',
+        'warm': '0 1px 3px 0 hsl(var(--shadow-color) / 0.1), 0 1px 2px -1px hsl(var(--shadow-color) / 0.1)',
+        'warm-md': '0 4px 6px -1px hsl(var(--shadow-color) / 0.1), 0 2px 4px -2px hsl(var(--shadow-color) / 0.1)',
+        'warm-lg': '0 10px 15px -3px hsl(var(--shadow-color) / 0.1), 0 4px 6px -4px hsl(var(--shadow-color) / 0.1)',
       },
       keyframes: {
         'accordion-down': {
@@ -78,10 +93,15 @@ const config: Config = {
             height: '0',
           },
         },
+        'fade-in-up': {
+          '0%': { opacity: '0', transform: 'translateY(12px)' },
+          '100%': { opacity: '1', transform: 'translateY(0)' },
+        },
       },
       animation: {
         'accordion-down': 'accordion-down 0.2s ease-out',
         'accordion-up': 'accordion-up 0.2s ease-out',
+        'fade-in-up': 'fade-in-up 0.5s ease-out forwards',
       },
     },
   },

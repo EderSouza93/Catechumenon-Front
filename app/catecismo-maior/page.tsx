@@ -7,7 +7,7 @@ import ContentCard from "@/components/ui/ContentCard";
 import { useProgress } from "@/hooks/useProgress";
 import largerCatechismData from "@/data/larger-catechism.json";
 import { CatechismQuestion } from "@/types";
-import { paginate } from "@/utils/paginate"; 
+import { paginate } from "@/utils/paginate";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Button } from "@/components/ui/button";
 
@@ -53,10 +53,10 @@ export default function LargerCatechismPage() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         {/* Header */}
         <div className="text-center mb-12">
-          <h1 className="text-4xl font-bold text-foreground mb-4">
+          <h1 className="text-4xl font-semibold text-foreground mb-4 text-balance">
             Catecismo Maior de Westminster
           </h1>
-          <p className="text-lg text-muted-foreground max-w-3xl mx-auto mb-8">
+          <p className="text-lg text-muted-foreground max-w-3xl mx-auto mb-8 font-body leading-relaxed">
             O Catecismo Maior foi criado para pastores e professores, oferecendo
             explanações mais detalhadas e completas das doutrinas cristãs
             fundamentais através de 196 perguntas e respostas.
@@ -91,9 +91,9 @@ export default function LargerCatechismPage() {
               ))}
             </div>
 
-            {/* Paginação */}
+            {/* Pagination */}
             {filteredContent.length > 0 && (
-              <div className="mt-8 flex justify-center space-x-4 items-center">
+              <div className="mt-8 flex justify-center items-center space-x-4">
                 <Button
                   disabled={currentPage === 1}
                   onClick={() => setCurrentPage(currentPage - 1)}
@@ -116,7 +116,7 @@ export default function LargerCatechismPage() {
 
             {filteredContent.length === 0 && (
               <div className="text-center py-12">
-                <p className="text-muted-foreground">
+                <p className="text-muted-foreground font-body">
                   Nenhum resultado encontrado para {searchQuery}.
                 </p>
               </div>
@@ -124,14 +124,14 @@ export default function LargerCatechismPage() {
 
             {/* Summary */}
             <div className="mt-16 text-center">
-              <div className="bg-muted/50 rounded-lg p-8">
+              <div className="bg-secondary rounded-lg p-8">
                 <p className="text-sm text-muted-foreground mb-4">
                   Perguntas estudadas: {progress.largerCatechism.length} de{" "}
                   {catechism.length}
                 </p>
                 <div className="w-full bg-muted rounded-full h-2">
                   <div
-                    className="bg-green-600 h-2 rounded-full transition-all duration-300"
+                    className="bg-doc-catecismo-maior h-2 rounded-full transition-all duration-300"
                     style={{
                       width: `${(progress.largerCatechism.length / catechism.length) * 100}%`,
                     }}

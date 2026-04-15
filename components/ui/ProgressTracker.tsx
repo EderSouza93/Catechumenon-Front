@@ -44,7 +44,7 @@ export default function ProgressTracker({
     <Card>
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
-          <CheckCircle className="h-5 w-5 text-amber-600" />
+          <CheckCircle className="h-5 w-5 text-primary" />
           Progresso de Estudos
         </CardTitle>
       </CardHeader>
@@ -60,7 +60,7 @@ export default function ProgressTracker({
 
         <div className="space-y-4">
           <div className="flex items-center gap-3">
-            <Book className="h-4 w-4 text-blue-600" />
+            <Book className="h-4 w-4 text-doc-confession" />
             <div className="flex-1">
               <div className="flex items-center justify-between mb-1">
                 <span className="text-xs font-medium">Confissão de Fé</span>
@@ -73,7 +73,7 @@ export default function ProgressTracker({
           </div>
 
           <div className="flex items-center gap-3">
-            <HelpCircle className="h-4 w-4 text-green-600" />
+            <HelpCircle className="h-4 w-4 text-doc-catecismo-maior" />
             <div className="flex-1">
               <div className="flex items-center justify-between mb-1">
                 <span className="text-xs font-medium">Catecismo Maior</span>
@@ -86,7 +86,7 @@ export default function ProgressTracker({
           </div>
 
           <div className="flex items-center gap-3">
-            <HelpCircle className="h-4 w-4 text-purple-600" />
+            <HelpCircle className="h-4 w-4 text-doc-catecismo-menor" />
             <div className="flex-1">
               <div className="flex items-center justify-between mb-1">
                 <span className="text-xs font-medium">Catecismo Menor</span>

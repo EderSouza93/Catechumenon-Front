@@ -8,7 +8,7 @@ export default function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           <div className="md:col-span-2">
             <div className="flex items-center space-x-2 mb-4">
-              <Book className="h-6 w-6 text-amber-600" />
+              <Book className="h-6 w-6 text-primary" />
               <span className="text-lg font-bold">Catechumenon</span>
             </div>
             <p className="text-muted-foreground text-sm leading-6">
@@ -73,7 +73,10 @@ export default function Footer() {
           </div>
         </div>
 
-        <div className="mt-8 pt-8 border-t border-border">
+        <div className="mt-8 pt-8">
+          <div className="divider-ornament mb-6">
+            <span className="text-muted-foreground/40 text-lg font-display">&#10053;</span>
+          </div>
           <p className="text-center text-xs text-muted-foreground">
             © 2025 Catechumenon Study Platform. Desenvolvido para a glória de Deus.
           </p>

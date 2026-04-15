@@ -45,7 +45,7 @@ export default function Sidebar({ items, currentId }: SidebarProps) {
             level > 0 ? 'ml-4' : ''
           } ${
             isActive 
-              ? 'bg-amber-100 text-amber-900 dark:bg-amber-900 dark:text-amber-100' 
+              ? 'bg-primary/10 text-primary dark:bg-primary/15 dark:text-primary'
               : 'text-muted-foreground hover:text-foreground hover:bg-muted'
           }`}
         >
