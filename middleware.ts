@@ -8,7 +8,7 @@ const PROTECTED_ROUTES = [
   '/recursos',
 ];
 
-const AUTH_ROUTES = ['/login'];
+const AUTH_ROUTES = ['/login', '/register'];
 
 export function middleware(request: NextRequest) {
   const token = request.cookies.get('auth-token')?.value;
@@ -42,5 +42,6 @@ export const config = {
     '/catecismo-menor/:path*',
     '/recursos/:path*',
     '/login',
+    '/register',
   ],
 };

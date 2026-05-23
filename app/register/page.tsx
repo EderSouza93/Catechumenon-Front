@@ -1,12 +1,12 @@
 'use client';
 
 import { useState } from 'react';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import { Book, LogIn } from 'lucide-react';
+import { Book, UserPlus } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthProvider';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -21,36 +21,38 @@ import {
 } from '@/components/ui/card';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 
-const loginSchema = z.object({
-  email: z.string().email('E-mail inválido'),
-  password: z.string().min(1, 'Senha é obrigatória'),
+const registerSchema = z.object({
+  name: z.string().min(2, 'Nome deve ter ao menos 2 caracteres').max(120, 'Nome muito longo'),
+  email: z.string().email('E-mail inválido').max(254, 'E-mail muito longo'),
+  password: z
+    .string()
+    .min(6, 'Senha deve ter ao menos 6 caracteres')
+    .max(128, 'Senha muito longa'),
 });
 
-type LoginForm = z.infer<typeof loginSchema>;
+type RegisterForm = z.infer<typeof registerSchema>;
 
-export default function LoginPage() {
-  const { login } = useAuth();
+export default function RegisterPage() {
+  const { register } = useAuth();
   const router = useRouter();
-  const searchParams = useSearchParams();
-  const callbackUrl = searchParams.get('callbackUrl') || '/dashboard';
   const [error, setError] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const form = useForm<LoginForm>({
-    resolver: zodResolver(loginSchema),
-    defaultValues: { email: '', password: '' },
+  const form = useForm<RegisterForm>({
+    resolver: zodResolver(registerSchema),
+    defaultValues: { name: '', email: '', password: '' },
   });
 
-  const onSubmit = async (data: LoginForm) => {
+  const onSubmit = async (data: RegisterForm) => {
     setError('');
     setIsSubmitting(true);
-    const result = await login(data);
+    const result = await register(data);
     setIsSubmitting(false);
 
     if (result.success) {
-      router.push(callbackUrl);
+      router.push('/dashboard');
     } else {
-      setError(result.error || 'Erro ao fazer login.');
+      setError(result.error || 'Erro ao criar conta.');
     }
   };
 
@@ -62,9 +64,9 @@ export default function LoginPage() {
             <Book className="h-8 w-8 text-primary" />
             <span className="text-xl font-bold font-display tracking-wide">Catechumenon</span>
           </Link>
-          <CardTitle className="font-display">Entrar na plataforma</CardTitle>
+          <CardTitle className="font-display">Criar conta</CardTitle>
           <CardDescription className="font-body">
-            Acesse sua conta para continuar seus estudos
+            Cadastre-se para acompanhar seus estudos
           </CardDescription>
         </CardHeader>
 
@@ -76,11 +78,27 @@ export default function LoginPage() {
               </Alert>
             )}
             <div className="space-y-2">
+              <Label htmlFor="name">Nome</Label>
+              <Input
+                id="name"
+                type="text"
+                placeholder="Seu nome"
+                autoComplete="name"
+                {...form.register('name')}
+              />
+              {form.formState.errors.name && (
+                <p className="text-sm text-destructive">
+                  {form.formState.errors.name.message}
+                </p>
+              )}
+            </div>
+            <div className="space-y-2">
               <Label htmlFor="email">E-mail</Label>
               <Input
                 id="email"
                 type="email"
                 placeholder="seu@email.com"
+                autoComplete="email"
                 {...form.register('email')}
               />
               {form.formState.errors.email && (
@@ -94,7 +112,8 @@ export default function LoginPage() {
               <Input
                 id="password"
                 type="password"
-                placeholder="Sua senha"
+                placeholder="Mínimo 6 caracteres"
+                autoComplete="new-password"
                 {...form.register('password')}
               />
               {form.formState.errors.password && (
@@ -106,13 +125,13 @@ export default function LoginPage() {
           </CardContent>
           <CardFooter className="flex flex-col space-y-4">
             <Button type="submit" className="w-full" disabled={isSubmitting}>
-              <LogIn className="mr-2 h-4 w-4" />
-              {isSubmitting ? 'Entrando...' : 'Entrar'}
+              <UserPlus className="mr-2 h-4 w-4" />
+              {isSubmitting ? 'Criando conta...' : 'Criar conta'}
             </Button>
             <p className="text-sm text-muted-foreground text-center font-body">
-              Ainda não tem uma conta?{' '}
-              <Link href="/register" className="text-primary hover:underline font-medium">
-                Criar conta
+              Já tem uma conta?{' '}
+              <Link href="/login" className="text-primary hover:underline font-medium">
+                Entrar
               </Link>
             </p>
           </CardFooter>
