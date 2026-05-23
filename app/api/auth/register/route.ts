@@ -7,11 +7,11 @@ const COOKIE_MAX_AGE = 60 * 60 * 24 * 7;
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { email, password } = body;
+    const { name, email, password } = body;
 
-    if (!email || !password) {
+    if (!name || !email || !password) {
       return NextResponse.json(
-        { success: false, error: 'E-mail e senha são obrigatórios.' },
+        { success: false, error: 'Nome, e-mail e senha são obrigatórios.' },
         { status: 400 }
       );
     }
@@ -24,23 +24,31 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const backendRes = await fetch(`${backendUrl}/auth/login`, {
+    const backendRes = await fetch(`${backendUrl}/auth/register`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email, password }),
+      body: JSON.stringify({ name, email, password }),
       cache: 'no-store',
     });
 
-    if (backendRes.status === 401) {
+    if (backendRes.status === 409) {
       return NextResponse.json(
-        { success: false, error: 'Credenciais inválidas.' },
-        { status: 401 }
+        { success: false, error: 'Este e-mail já está em uso.' },
+        { status: 409 }
       );
+    }
+
+    if (backendRes.status === 400) {
+      const errBody = await backendRes.json().catch(() => null);
+      const message =
+        (Array.isArray(errBody?.message) ? errBody.message[0] : errBody?.message) ||
+        'Dados inválidos.';
+      return NextResponse.json({ success: false, error: message }, { status: 400 });
     }
 
     if (!backendRes.ok) {
       return NextResponse.json(
-        { success: false, error: 'Erro ao fazer login.' },
+        { success: false, error: 'Erro ao criar conta.' },
         { status: backendRes.status }
       );
     }

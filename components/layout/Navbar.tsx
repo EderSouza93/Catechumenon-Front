@@ -78,7 +78,7 @@ export default function Navbar() {
                   className={cn(
                     'text-sm font-medium transition-colors py-1',
                     pathname === item.href
-                      ? 'text-amber-600 border-b-2 border-amber-600'
+                      ? 'text-primary border-b-2 border-primary'
                       : 'text-muted-foreground hover:text-foreground'
                   )}
                 >
@@ -141,7 +141,7 @@ export default function Navbar() {
                     <DropdownMenuTrigger asChild>
                       <Button variant="ghost" size="sm" className="flex items-center gap-2">
                         <Avatar className="h-7 w-7">
-                          <AvatarFallback className="bg-amber-100 text-amber-800 dark:bg-amber-900 dark:text-amber-200 text-xs">
+                          <AvatarFallback className="bg-primary/10 text-primary text-xs">
                             {user?.name?.charAt(0).toUpperCase()}
                           </AvatarFallback>
                         </Avatar>
@@ -163,7 +163,7 @@ export default function Navbar() {
                     </DropdownMenuContent>
                   </DropdownMenu>
                 ) : (
-                  <Button asChild size="sm" className="bg-amber-600 hover:bg-amber-700">
+                  <Button asChild size="sm">
                     <Link href="/login">
                       <LogIn className="mr-2 h-4 w-4" />
                       <span className="hidden sm:inline">Entrar</span>
@@ -203,7 +203,7 @@ export default function Navbar() {
                   className={cn(
                     'block px-3 py-2 text-base font-medium rounded-md transition-colors',
                     pathname === item.href
-                      ? 'text-amber-600 bg-amber-50 dark:bg-amber-900/20'
+                      ? 'text-primary bg-primary/10'
                       : 'text-muted-foreground hover:text-foreground hover:bg-muted'
                   )}
                   onClick={() => setIsOpen(false)}

@@ -2,13 +2,14 @@
 
 import { createContext, useContext, useEffect, useState, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
-import { User, LoginCredentials } from '@/types';
+import { User, LoginCredentials, RegisterCredentials } from '@/types';
 
 interface AuthContextType {
   user: User | null;
   isLoading: boolean;
   isAuthenticated: boolean;
   login: (credentials: LoginCredentials) => Promise<{ success: boolean; error?: string }>;
+  register: (credentials: RegisterCredentials) => Promise<{ success: boolean; error?: string }>;
   logout: () => Promise<void>;
 }
 
@@ -58,6 +59,25 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   }, []);
 
+  const register = useCallback(async (credentials: RegisterCredentials) => {
+    try {
+      const res = await fetch('/api/auth/register', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(credentials),
+      });
+      const data = await res.json();
+
+      if (data.success && data.user) {
+        setUser(data.user);
+        return { success: true };
+      }
+      return { success: false, error: data.error || 'Erro ao criar conta.' };
+    } catch {
+      return { success: false, error: 'Erro de conexão.' };
+    }
+  }, []);
+
   const logout = useCallback(async () => {
     try {
       await fetch('/api/auth/logout', { method: 'POST' });
@@ -74,6 +94,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         isLoading,
         isAuthenticated: !!user,
         login,
+        register,
         logout,
       }}
     >
