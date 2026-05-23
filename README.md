@@ -1,8 +1,8 @@
 # Catechumenon Front-End
 
-![Versão](https://img.shields.io/badge/version-0.2.0-blue)
+![Versão](https://img.shields.io/badge/version-0.3.0-blue)
 ![Status](https://img.shields.io/badge/status-em%20desenvolvimento-yellow)
-![Feature](https://img.shields.io/badge/feature-Auth%20Mock%20%2B%20Dashboard-green)
+![Feature](https://img.shields.io/badge/feature-Auth%20NestJS%20%2B%20Dashboard-green)
 
 ### [Acessar a aplicação](https://catechumenon-front.vercel.app/)
 
@@ -18,17 +18,13 @@ Catechumenon é uma aplicação web front-end dedicada a fornecer acesso a docum
 - **Integração com API da Bíblia:** Referências bíblicas clicáveis com exibição do versículo correspondente.
 - **Busca Global (Ctrl+K):** Command palette que pesquisa em todos os documentos simultaneamente, com resultados agrupados por documento.
 - **Highlight nos Resultados:** Termos buscados são destacados nos cards de conteúdo.
-- **Autenticação (Mock):** Sistema de login com cookies httpOnly, proteção de rotas via middleware, e gerenciamento de sessão.
+- **Autenticação (NestJS):** Login e registro integrados com back-end Nest.js via API routes do Next.js, cookies httpOnly com JWT, proteção de rotas via middleware e gerenciamento de sessão.
+- **Cadastro de Usuário:** Tela `/register` com validação (React Hook Form + Zod) e fluxo completo de criação de conta.
 - **Dashboard Personalizado:** Tela inicial após login com saudação, progresso de leitura e acesso rápido aos documentos.
 - **Acompanhamento de Progresso:** Sistema de marcação de leitura com persistência local.
 - **Tema Claro/Escuro:** Suporte completo a dark mode.
 
-## Credenciais de Teste
-
-| E-mail | Senha |
-|--------|-------|
-| admin@catechumenon.com | 123456 |
-| estudante@catechumenon.com | 123456 |
+> **Acesso:** crie uma conta em `/register` (o back-end Nest.js precisa estar rodando — veja a seção *Como Executar o Projeto*).
 
 ## Tecnologias Utilizadas
 
@@ -38,6 +34,7 @@ Catechumenon é uma aplicação web front-end dedicada a fornecer acesso a docum
 - **Componentes UI:** [shadcn/ui](https://ui.shadcn.com/)
 - **Formulários:** [React Hook Form](https://react-hook-form.com/) + [Zod](https://zod.dev/)
 - **Ícones:** [Lucide React](https://lucide.dev/)
+- **Back-end (separado):** [Nest.js](https://nestjs.com/) — autenticação JWT consumida pelas API routes do Next.js.
 
 ## Como Executar o Projeto
 
@@ -56,24 +53,31 @@ Catechumenon é uma aplicação web front-end dedicada a fornecer acesso a docum
     npm install
     ```
 
-4.  **Inicie o servidor de desenvolvimento:**
+4.  **Configure as variáveis de ambiente:**
+    ```bash
+    cp .env.example .env.local
+    ```
+    Ajuste `BACKEND_API_URL` para apontar para a sua instância do back-end Nest.js (padrão: `http://localhost:3001`). Sem o back-end rodando, login e cadastro não funcionarão.
+
+5.  **Inicie o servidor de desenvolvimento:**
     ```bash
     npm run dev
     ```
 
-5.  Abra [http://localhost:3000](http://localhost:3000) no seu navegador para ver a aplicação.
+6.  Abra [http://localhost:3000](http://localhost:3000) no seu navegador para ver a aplicação.
 
 ## Estrutura do Projeto
 
 ```
 app/
-  api/auth/          # Mock API de autenticação (login, logout, me)
+  api/auth/          # Proxy de autenticação para o back-end Nest.js (login, register, logout, me)
   api/bible/         # Proxy para API da Bíblia
   api/search/        # API de busca nos documentos
   api/catechism/     # APIs dos catecismos
   api/confession/    # API da confissão
   dashboard/         # Dashboard (protegido)
   login/             # Página de login
+  register/          # Página de cadastro
   confissao/         # Confissão de Fé (protegido)
   catecismo-maior/   # Catecismo Maior (protegido)
   catecismo-menor/   # Catecismo Menor (protegido)
@@ -95,9 +99,10 @@ middleware.ts        # Proteção de rotas
 -   [x] **Busca Global:** Command palette (Ctrl+K) com busca em todos os documentos e highlight nos resultados.
 -   [x] **Autenticação Mock:** Sistema de login com cookies, proteção de rotas e dashboard personalizado.
 -   [x] **Melhorias de UI/Acessibilidade:** Aria-labels, navegação por teclado, paginação consistente, indicador de página ativa.
+-   [x] **Integração com Back-end Nest.js:** Autenticação real (JWT) consumida pelas API routes do Next.js, substituindo a auth mock.
+-   [x] **Registro de Usuário:** Tela de cadastro (`/register`) com validação e fluxo completo de criação de conta.
 -   [ ] **Integração com API da Bíblia (melhorias):** Verificar possíveis erros ao clicar nos versículos das referências.
--   [ ] **Desenvolvimento do Back-end:** Criação de uma API dedicada utilizando **Nest.js**. Migração dos dados mockados para **MongoDB**. Substituição da auth mock por autenticação real.
--   [ ] **Registro de Usuário:** Implementar tela de cadastro e fluxo de registro completo.
+-   [ ] **Migração de Dados para PostgreSQL:** Mover os JSONs dos documentos para o banco de dados via back-end Nest.js.
 -   [ ] **Persistência de Progresso no Servidor:** Migrar o progresso de leitura do localStorage para o banco de dados, permitindo acesso entre dispositivos.
 -   [ ] **Anotações Pessoais:** Permitir que o usuário faça anotações nos textos estudados.
 
