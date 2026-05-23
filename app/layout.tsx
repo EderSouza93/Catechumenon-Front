@@ -1,9 +1,28 @@
 import './globals.css';
 import type { Metadata } from 'next';
-import { Inter } from 'next/font/google';
+import { Cormorant_Garamond, Lora, Outfit } from 'next/font/google';
 import { ThemeProvider } from '@/contexts/ThemeProvider';
 
-const inter = Inter({ subsets: ['latin'] });
+const cormorant = Cormorant_Garamond({
+  subsets: ['latin'],
+  weight: ['400', '500', '600', '700'],
+  variable: '--font-display',
+  display: 'swap',
+});
+
+const lora = Lora({
+  subsets: ['latin'],
+  weight: ['400', '500', '600', '700'],
+  variable: '--font-body',
+  display: 'swap',
+});
+
+const outfit = Outfit({
+  subsets: ['latin'],
+  weight: ['300', '400', '500', '600', '700'],
+  variable: '--font-ui',
+  display: 'swap',
+});
 
 export const metadata: Metadata = {
   title: 'Catechumenon - Estudo da Confissão de Fé',
@@ -17,14 +36,16 @@ export default function RootLayout({
 }) {
   return (
     <html lang="pt-BR" suppressHydrationWarning>
-      <body className={inter.className}>
+      <body className={`${cormorant.variable} ${lora.variable} ${outfit.variable}`}>
         <ThemeProvider
           attribute="class"
           defaultTheme="system"
           enableSystem
           disableTransitionOnChange
         >
-          {children}
+          <div className="grain-overlay">
+            {children}
+          </div>
         </ThemeProvider>
       </body>
     </html>

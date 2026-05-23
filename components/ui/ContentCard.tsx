@@ -178,8 +178,8 @@ export default function ContentCard({
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
         <Card
-          className={`cursor-pointer transition-all duration-200 hover:shadow-lg ${
-            read ? 'ring-2 ring-amber-200 bg-amber-50/50 dark:bg-amber-900/10' : ''
+          className={`cursor-pointer transition-all duration-200 hover:shadow-warm-lg ${
+            read ? 'ring-2 ring-primary/30 bg-primary/5 dark:bg-primary/10' : ''
           }`}
           onClick={handleClick}
         >
@@ -196,7 +196,7 @@ export default function ContentCard({
                 )}
               </div>
               {read && (
-                <Badge variant="secondary" className="bg-amber-100 text-amber-800 dark:bg-amber-900 dark:text-amber-200">
+                <Badge variant="secondary" className="bg-primary/10 text-primary dark:bg-primary/20 dark:text-primary">
                   Lido
                 </Badge>
               )}

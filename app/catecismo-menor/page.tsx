@@ -49,15 +49,15 @@ export default function ShorterCatechismPage() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         {/* Header */}
         <div className="text-center mb-12">
-          <h1 className="text-4xl font-bold text-foreground mb-4">
+          <h1 className="text-4xl font-semibold text-foreground mb-4 text-balance">
             Catecismo Menor de Westminster
           </h1>
-          <p className="text-lg text-muted-foreground max-w-3xl mx-auto mb-8">
-            O Catecismo Menor foi projetado para instrução básica na fé cristã, 
-            apresentando as verdades fundamentais em formato conciso e memorável 
+          <p className="text-lg text-muted-foreground max-w-3xl mx-auto mb-8 font-body leading-relaxed">
+            O Catecismo Menor foi projetado para instrução básica na fé cristã,
+            apresentando as verdades fundamentais em formato conciso e memorável
             através de 107 perguntas e respostas essenciais.
           </p>
-          
+
           <div className="max-w-md mx-auto">
             <SearchBar
               onSearch={(q) => { setSearchQuery(q); setCurrentPage(1); }}
@@ -85,35 +85,30 @@ export default function ShorterCatechismPage() {
               ))}
             </div>
 
-            {/* Paginação */}
-              <div className='mt-8 flex justify-center space-x-4'>
-                <Button
-                  disabled={currentPage === 1}
-                  onClick={() => setCurrentPage(currentPage - 1)}
-                  className={`px-4 py-2 rounded transition-colors duration-200 
-                    ${currentPage === 1 ? 'bg-gray-300 text-gray-500 cursor-not-allowed' : 'bg-amber-600 text-white hover:bg-amber-700'}
-                  `}
-                >
-                  Anterior
-                </Button>
-                <span>
-                  Página {currentPage} de {totalPages}
-                </span>
-                <Button
-                  disabled={currentPage === totalPages}
-                  onClick={() => setCurrentPage(currentPage + 1)}
-                  className={`px-4 py-2 rounded transition-colors duration-200 
-                    ${currentPage === totalPages ? 'bg-gray-300 text-gray-500 cursor-not-allowed' : 'bg-amber-600 text-white hover:bg-amber-700'}
-                  `}
-                >
-                  Próximo
-                </Button>
-              </div>
-
+            {/* Pagination */}
+            <div className="mt-8 flex justify-center items-center space-x-4">
+              <Button
+                disabled={currentPage === 1}
+                onClick={() => setCurrentPage(currentPage - 1)}
+                variant={currentPage === 1 ? 'outline' : 'default'}
+              >
+                Anterior
+              </Button>
+              <span className="text-sm font-medium">
+                Página {currentPage} de {totalPages}
+              </span>
+              <Button
+                disabled={currentPage === totalPages}
+                onClick={() => setCurrentPage(currentPage + 1)}
+                variant={currentPage === totalPages ? 'outline' : 'default'}
+              >
+                Próximo
+              </Button>
+            </div>
 
             {filteredContent.length === 0 && (
               <div className="text-center py-12">
-                <p className="text-muted-foreground">
+                <p className="text-muted-foreground font-body">
                   Nenhum resultado encontrado para &quot;{searchQuery}&quot;.
                 </p>
               </div>
@@ -121,15 +116,15 @@ export default function ShorterCatechismPage() {
 
             {/* Summary */}
             <div className="mt-16 text-center">
-              <div className="bg-muted/50 rounded-lg p-8">
+              <div className="bg-secondary rounded-lg p-8">
                 <p className="text-sm text-muted-foreground mb-4">
                   Perguntas estudadas: {progress.shorterCatechism.length} de {catechism.length}
                 </p>
                 <div className="w-full bg-muted rounded-full h-2">
-                  <div 
-                    className="bg-purple-600 h-2 rounded-full transition-all duration-300"
-                    style={{ 
-                      width: `${(progress.shorterCatechism.length / catechism.length) * 100}%` 
+                  <div
+                    className="bg-doc-catecismo-menor h-2 rounded-full transition-all duration-300"
+                    style={{
+                      width: `${(progress.shorterCatechism.length / catechism.length) * 100}%`
                     }}
                   ></div>
                 </div>

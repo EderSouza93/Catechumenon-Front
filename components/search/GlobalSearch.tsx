@@ -138,7 +138,7 @@ export default function GlobalSearch({ open, onOpenChange }: GlobalSearchProps) 
                     value={item.id}
                     onSelect={() => handleSelect(item.href)}
                   >
-                    <Book className="mr-2 h-4 w-4 shrink-0 text-blue-500" />
+                    <Book className="mr-2 h-4 w-4 shrink-0 text-doc-confession" />
                     <div className="flex flex-col overflow-hidden">
                       <span className="font-medium truncate">{item.title}</span>
                       <span className="text-xs text-muted-foreground truncate">
@@ -158,7 +158,7 @@ export default function GlobalSearch({ open, onOpenChange }: GlobalSearchProps) 
                     value={item.id}
                     onSelect={() => handleSelect(item.href)}
                   >
-                    <HelpCircle className="mr-2 h-4 w-4 shrink-0 text-green-500" />
+                    <HelpCircle className="mr-2 h-4 w-4 shrink-0 text-doc-catecismo-maior" />
                     <div className="flex flex-col overflow-hidden">
                       <span className="font-medium truncate">{item.title}</span>
                       <span className="text-xs text-muted-foreground truncate">
@@ -178,7 +178,7 @@ export default function GlobalSearch({ open, onOpenChange }: GlobalSearchProps) 
                     value={item.id}
                     onSelect={() => handleSelect(item.href)}
                   >
-                    <FileText className="mr-2 h-4 w-4 shrink-0 text-purple-500" />
+                    <FileText className="mr-2 h-4 w-4 shrink-0 text-doc-catecismo-menor" />
                     <div className="flex flex-col overflow-hidden">
                       <span className="font-medium truncate">{item.title}</span>
                       <span className="text-xs text-muted-foreground truncate">

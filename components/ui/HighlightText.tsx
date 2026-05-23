@@ -11,7 +11,7 @@ export default function HighlightText({
   text,
   query,
   className,
-  highlightClassName = 'bg-amber-200 dark:bg-amber-700 rounded-sm px-0.5',
+  highlightClassName = 'bg-primary/20 dark:bg-primary/30 rounded-sm px-0.5',
 }: HighlightTextProps) {
   if (!query.trim()) {
     return <span className={className}>{text}</span>;

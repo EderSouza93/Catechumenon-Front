@@ -58,15 +58,15 @@ export default function ConfessionPage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
           {/* Header */}
           <div className="text-center mb-12">
-            <h1 className="text-4xl font-bold text-foreground mb-4">
+            <h1 className="text-4xl font-semibold text-foreground mb-4 text-balance">
               Confissão de Fé de Westminster
             </h1>
-            <p className="text-lg text-muted-foreground max-w-3xl mx-auto mb-8">
-              A Confissão de Fé de Westminster foi elaborada pela Assembleia de Westminster 
-              entre 1643 e 1649, constituindo uma das mais importantes declarações doutrinárias 
+            <p className="text-lg text-muted-foreground max-w-3xl mx-auto mb-8 font-body leading-relaxed">
+              A Confissão de Fé de Westminster foi elaborada pela Assembleia de Westminster
+              entre 1643 e 1649, constituindo uma das mais importantes declarações doutrinárias
               do cristianismo reformado.
             </p>
-            
+
             <div className="max-w-md mx-auto">
               <SearchBar
                 onSearch={(q) => { setSearchQuery(q); setCurrentPage(1); }}
@@ -82,10 +82,10 @@ export default function ConfessionPage() {
               <div className="space-y-8">
                 {paginatedContent.map((chapter) => (
                   <div key={chapter.id} className="space-y-6">
-                    <h2 className="text-2xl font-bold text-foreground border-b border-border pb-3">
+                    <h2 className="text-2xl font-semibold text-foreground border-b border-border pb-3">
                       Capítulo {chapter.id}: {chapter.title}
                     </h2>
-                    
+
                     <div className="grid gap-6 md:grid-cols-1 lg:grid-cols-2">
                       {chapter.articles.map((article) => {
                         return (
@@ -106,26 +106,22 @@ export default function ConfessionPage() {
                 ))}
               </div>
 
-              {/* Paginação */}
-              <div className='mt-8 flex justify-center space-x-4'>
+              {/* Pagination */}
+              <div className="mt-8 flex justify-center items-center space-x-4">
                 <Button
                   disabled={currentPage === 1}
                   onClick={() => setCurrentPage(currentPage - 1)}
-                  className={`px-4 py-2 rounded transition-colors duration-200 
-                    ${currentPage === 1 ? 'bg-gray-300 text-gray-500 cursor-not-allowed' : 'bg-amber-600 text-white hover:bg-amber-700'}
-                  `}
+                  variant={currentPage === 1 ? 'outline' : 'default'}
                 >
                   Anterior
                 </Button>
-                <span>
+                <span className="text-sm font-medium">
                   Página {currentPage} de {totalPages}
                 </span>
                 <Button
                   disabled={currentPage === totalPages}
                   onClick={() => setCurrentPage(currentPage + 1)}
-                  className={`px-4 py-2 rounded transition-colors duration-200 
-                    ${currentPage === totalPages ? 'bg-gray-300 text-gray-500 cursor-not-allowed' : 'bg-amber-600 text-white hover:bg-amber-700'}
-                  `}
+                  variant={currentPage === totalPages ? 'outline' : 'default'}
                 >
                   Próximo
                 </Button>
@@ -133,7 +129,7 @@ export default function ConfessionPage() {
 
               {filteredContent.length === 0 && (
                 <div className="text-center py-12">
-                  <p className="text-muted-foreground">
+                  <p className="text-muted-foreground font-body">
                     Nenhum resultado encontrado para &quot;{searchQuery}&quot;.
                   </p>
                 </div>
@@ -141,15 +137,15 @@ export default function ConfessionPage() {
 
               {/* Summary */}
               <div className="mt-16 text-center">
-                <div className="bg-muted/50 rounded-lg p-8">
+                <div className="bg-secondary rounded-lg p-8">
                   <p className="text-sm text-muted-foreground mb-4">
                     Capítulos concluídos: {progress.confessionChapters.length} de {confession.length}
                   </p>
                   <div className="w-full bg-muted rounded-full h-2">
-                    <div 
-                      className="bg-amber-600 h-2 rounded-full transition-all duration-300"
-                      style={{ 
-                        width: `${(progress.confessionChapters.length / confession.length) * 100}%` 
+                    <div
+                      className="bg-doc-confession h-2 rounded-full transition-all duration-300"
+                      style={{
+                        width: `${(progress.confessionChapters.length / confession.length) * 100}%`
                       }}
                     ></div>
                   </div>
