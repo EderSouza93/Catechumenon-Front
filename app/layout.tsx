@@ -2,6 +2,7 @@ import './globals.css';
 import type { Metadata } from 'next';
 import { Cormorant_Garamond, Lora, Outfit } from 'next/font/google';
 import { ThemeProvider } from '@/contexts/ThemeProvider';
+import { AuthProvider } from '@/contexts/AuthProvider';
 
 const cormorant = Cormorant_Garamond({
   subsets: ['latin'],
@@ -43,9 +44,11 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          <div className="grain-overlay">
-            {children}
-          </div>
+          <AuthProvider>
+            <div className="grain-overlay">
+              {children}
+            </div>
+          </AuthProvider>
         </ThemeProvider>
       </body>
     </html>

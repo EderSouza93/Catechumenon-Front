@@ -9,7 +9,7 @@ import shorterCatechismData from '@/data/shorter-catechism.json';
 import { CatechismQuestion } from '@/types';
 import { paginate } from '@/utils/paginate';
 import { Skeleton } from '@/components/ui/skeleton';
-import { Button } from '@/components/ui/button';
+import PaginationControls from '@/components/ui/PaginationControls';
 
 export default function ShorterCatechismPage() {
   const [searchQuery, setSearchQuery] = useState('');
@@ -85,26 +85,15 @@ export default function ShorterCatechismPage() {
               ))}
             </div>
 
-            {/* Pagination */}
-            <div className="mt-8 flex justify-center items-center space-x-4">
-              <Button
-                disabled={currentPage === 1}
-                onClick={() => setCurrentPage(currentPage - 1)}
-                variant={currentPage === 1 ? 'outline' : 'default'}
-              >
-                Anterior
-              </Button>
-              <span className="text-sm font-medium">
-                Página {currentPage} de {totalPages}
-              </span>
-              <Button
-                disabled={currentPage === totalPages}
-                onClick={() => setCurrentPage(currentPage + 1)}
-                variant={currentPage === totalPages ? 'outline' : 'default'}
-              >
-                Próximo
-              </Button>
-            </div>
+            {/* Paginação */}
+            {filteredContent.length > 0 && (
+              <PaginationControls
+                currentPage={currentPage}
+                totalPages={totalPages}
+                onPageChange={setCurrentPage}
+              />
+            )}
+
 
             {filteredContent.length === 0 && (
               <div className="text-center py-12">
