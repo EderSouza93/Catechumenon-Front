@@ -15,7 +15,17 @@ import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog';
 import confessionData from '@/data/confession.json';
 import largerCatechismData from '@/data/larger-catechism.json';
 import shorterCatechismData from '@/data/shorter-catechism.json';
-import { ConfessionChapter, CatechismQuestion } from '@/types';
+
+type LegacyConfessionChapter = {
+  id: number;
+  title: string;
+  articles: Array<{ id: number; text: string }>;
+};
+type LegacyCatechismQuestion = {
+  id: number;
+  question: string;
+  answer: string;
+};
 
 interface GlobalSearchProps {
   open: boolean;
@@ -35,9 +45,9 @@ export default function GlobalSearch({ open, onOpenChange }: GlobalSearchProps) 
   const [query, setQuery] = useState('');
   const router = useRouter();
 
-  const confession = confessionData as ConfessionChapter[];
-  const largerCatechism = largerCatechismData as CatechismQuestion[];
-  const shorterCatechism = shorterCatechismData as CatechismQuestion[];
+  const confession = confessionData as unknown as LegacyConfessionChapter[];
+  const largerCatechism = largerCatechismData as unknown as LegacyCatechismQuestion[];
+  const shorterCatechism = shorterCatechismData as unknown as LegacyCatechismQuestion[];
 
   useEffect(() => {
     if (!open) setQuery('');
