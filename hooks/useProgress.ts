@@ -1,8 +1,10 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { ConfessionChapter, ReadingProgress } from '@/types';
+import { ReadingProgress } from '@/types';
 import confessionData from '@/data/confession.json';
+
+type LegacyConfessionChapter = { id: number; articles: Array<{ id: number }> };
 
 export function useProgress() {
   const [progress, setProgress] = useState<ReadingProgress>({
@@ -57,7 +59,7 @@ export function useProgress() {
       ? progress.confessionSections.filter(id => id !== sectionKey)
       : [...progress.confessionSections, sectionKey];
 
-    const chapter = (confessionData as ConfessionChapter[]).find(c => c.id === chapterId);
+    const chapter = (confessionData as unknown as LegacyConfessionChapter[]).find(c => c.id === chapterId);
     let newChapters = [...progress.confessionChapters];
 
     if (chapter) {

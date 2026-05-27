@@ -102,7 +102,8 @@ middleware.ts        # Proteção de rotas
 -   [x] **Integração com Back-end Nest.js:** Autenticação real (JWT) consumida pelas API routes do Next.js, substituindo a auth mock.
 -   [x] **Registro de Usuário:** Tela de cadastro (`/register`) com validação e fluxo completo de criação de conta.
 -   [ ] **Integração com API da Bíblia (melhorias):** Verificar possíveis erros ao clicar nos versículos das referências.
--   [ ] **Migração de Dados para PostgreSQL:** Mover os JSONs dos documentos para o banco de dados via back-end Nest.js.
+
+-   [x] **Migração de Dados para PostgreSQL:** Mover os JSONs dos documentos para o banco de dados via back-end Nest.js.
 -   [ ] **Persistência de Progresso no Servidor:** Migrar o progresso de leitura do localStorage para o banco de dados, permitindo acesso entre dispositivos.
 -   [ ] **Anotações Pessoais:** Permitir que o usuário faça anotações nos textos estudados.
 

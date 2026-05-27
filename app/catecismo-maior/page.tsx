@@ -1,44 +1,41 @@
-"use client";
+'use client';
 
-import { useState, useMemo } from "react";
-import Layout from "@/components/layout/Layout";
-import SearchBar from "@/components/ui/SearchBar";
-import ContentCard from "@/components/ui/ContentCard";
-import { useProgress } from "@/hooks/useProgress";
-import largerCatechismData from "@/data/larger-catechism.json";
-import { CatechismQuestion } from "@/types";
-import { paginate } from "@/utils/paginate";
-import { Skeleton } from "@/components/ui/skeleton";
-import PaginationControls from "@/components/ui/PaginationControls";
+import { useState } from 'react';
+import Layout from '@/components/layout/Layout';
+import SearchBar from '@/components/ui/SearchBar';
+import ContentCard from '@/components/ui/ContentCard';
+import { useProgress } from '@/hooks/useProgress';
+import { useLargerCatechism } from '@/hooks/useLargerCatechism';
+import { useDocumentsSearch } from '@/hooks/useDocumentsSearch';
+import { Skeleton } from '@/components/ui/skeleton';
+import PaginationControls from '@/components/ui/PaginationControls';
+import { SearchDocumentType, SearchResultType } from '@/types';
+
+const PAGE_SIZE = 10;
 
 export default function LargerCatechismPage() {
-  const [searchQuery, setSearchQuery] = useState("");
+  const [searchQuery, setSearchQuery] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
-  const pageSize = 10;
+  const isSearching = searchQuery.trim().length >= 2;
 
   const { progress, markLargerCatechismAsRead, isLoading } = useProgress();
 
-  const catechism = largerCatechismData as CatechismQuestion[];
+  const list = useLargerCatechism({
+    page: isSearching ? 1 : currentPage,
+    limit: PAGE_SIZE,
+  });
+  const search = useDocumentsSearch({
+    q: searchQuery,
+    type: SearchDocumentType.Larger,
+    page: currentPage,
+    limit: PAGE_SIZE,
+    enabled: isSearching,
+  });
 
-  const filteredContent = useMemo(() => {
-    if (!searchQuery.trim()) return catechism;
-
-    return catechism.filter((item) => {
-      const questionMatch = item.question
-        .toLowerCase()
-        .includes(searchQuery.toLowerCase());
-      const answerMatch = item.answer
-        .toLowerCase()
-        .includes(searchQuery.toLowerCase());
-      return questionMatch || answerMatch;
-    });
-  }, [searchQuery, catechism]);
-
-  const paginatedContent = useMemo(() => {
-    return paginate(filteredContent, currentPage, pageSize);
-  }, [filteredContent, currentPage]);
-
-  const totalPages = Math.ceil(filteredContent.length / pageSize);
+  const isFetching = isSearching ? search.isLoading : list.isLoading;
+  const fetchError = isSearching ? search.isError : list.isError;
+  const total = isSearching ? search.total : list.total;
+  const totalPages = Math.ceil(total / PAGE_SIZE);
 
   const renderSkeletons = () => (
     <div className="grid gap-6 md:grid-cols-1 lg:grid-cols-2">
@@ -48,10 +45,41 @@ export default function LargerCatechismPage() {
     </div>
   );
 
+  const renderCards = () => {
+    if (isSearching) {
+      return search.results
+        .filter((r) => r.type === SearchResultType.LargerCatechism)
+        .map((r) => {
+          const number = 'number' in r ? r.number : 0;
+          return (
+            <ContentCard
+              key={r.id}
+              title={`Pergunta ${number}`}
+              content={r.snippet}
+              isCompleted={progress.largerCatechism.includes(number)}
+              onMarkAsRead={() => markLargerCatechismAsRead(number)}
+              searchQuery={searchQuery}
+            />
+          );
+        });
+    }
+    return list.items.map((question) => (
+      <ContentCard
+        key={question.id}
+        title={`Pergunta ${question.number}`}
+        subtitle={question.question}
+        content={question.answer}
+        references={question.bibleRefs}
+        isCompleted={progress.largerCatechism.includes(question.number)}
+        onMarkAsRead={() => markLargerCatechismAsRead(question.number)}
+        searchQuery={searchQuery}
+      />
+    ));
+  };
+
   return (
     <Layout>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        {/* Header */}
         <div className="text-center mb-12">
           <h1 className="text-4xl font-semibold text-foreground mb-4 text-balance">
             Catecismo Maior de Westminster
@@ -71,28 +99,19 @@ export default function LargerCatechismPage() {
           </div>
         </div>
 
-        {isLoading ? (
-          renderSkeletons()
+        {isLoading || isFetching ? renderSkeletons() : fetchError ? (
+          <div className="text-center py-12">
+            <p className="text-muted-foreground font-body">
+              Não foi possível carregar o Catecismo Maior. Tente novamente mais tarde.
+            </p>
+          </div>
         ) : (
           <>
-            {/* Content Grid */}
             <div className="grid gap-6 md:grid-cols-1 lg:grid-cols-2">
-              {paginatedContent.map((question) => (
-                <ContentCard
-                  key={question.id}
-                  title={`Pergunta ${question.id}`}
-                  subtitle={question.question}
-                  content={question.answer}
-                  references={question.scriptureReferences}
-                  isCompleted={progress.largerCatechism.includes(question.id)}
-                  onMarkAsRead={() => markLargerCatechismAsRead(question.id)}
-                  searchQuery={searchQuery}
-                />
-              ))}
+              {renderCards()}
             </div>
 
-            {/* Pagination */}
-            {filteredContent.length > 0 && (
+            {total > 0 && (
               <PaginationControls
                 currentPage={currentPage}
                 totalPages={totalPages}
@@ -100,7 +119,7 @@ export default function LargerCatechismPage() {
               />
             )}
 
-            {filteredContent.length === 0 && (
+            {total === 0 && isSearching && (
               <div className="text-center py-12">
                 <p className="text-muted-foreground font-body">
                   Nenhum resultado encontrado para {searchQuery}.
@@ -108,23 +127,25 @@ export default function LargerCatechismPage() {
               </div>
             )}
 
-            {/* Summary */}
-            <div className="mt-16 text-center">
-              <div className="bg-secondary rounded-lg p-8">
-                <p className="text-sm text-muted-foreground mb-4">
-                  Perguntas estudadas: {progress.largerCatechism.length} de{" "}
-                  {catechism.length}
-                </p>
-                <div className="w-full bg-muted rounded-full h-2">
-                  <div
-                    className="bg-doc-catecismo-maior h-2 rounded-full transition-all duration-300"
-                    style={{
-                      width: `${(progress.largerCatechism.length / catechism.length) * 100}%`,
-                    }}
-                  ></div>
+            {!isSearching && (
+              <div className="mt-16 text-center">
+                <div className="bg-secondary rounded-lg p-8">
+                  <p className="text-sm text-muted-foreground mb-4">
+                    Perguntas estudadas: {progress.largerCatechism.length} de {total}
+                  </p>
+                  <div className="w-full bg-muted rounded-full h-2">
+                    <div
+                      className="bg-doc-catecismo-maior h-2 rounded-full transition-all duration-300"
+                      style={{
+                        width: total > 0
+                          ? `${(progress.largerCatechism.length / total) * 100}%`
+                          : '0%',
+                      }}
+                    ></div>
+                  </div>
                 </div>
               </div>
-            </div>
+            )}
           </>
         )}
       </div>

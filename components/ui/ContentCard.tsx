@@ -8,10 +8,9 @@ import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover
 import { getBibleApiUrl } from '@/lib/bibleUtils';
 import HighlightText from '@/components/ui/HighlightText';
 
-type BooksInput = string[] | string[][];
 interface Section {
   title: string;
-  books: BooksInput;
+  items: string[];
   columns?: number;
 }
 
@@ -26,12 +25,8 @@ interface ContentCardProps {
   searchQuery?: string;
 }
 
-/** Normaliza books em colunas */
-function toColumns(books: BooksInput, columns = 3): string[][] {
-  if (Array.isArray(books) && books.length > 0 && Array.isArray(books[0])) {
-    return books as string[][];
-  }
-  const flat = (books as string[]).filter(Boolean);
+function toColumns(items: string[], columns = 3): string[][] {
+  const flat = items.filter(Boolean);
   const cols: string[][] = Array.from({ length: columns }, () => []);
   flat.forEach((item, i) => {
     cols[i % columns].push(item);
@@ -41,8 +36,8 @@ function toColumns(books: BooksInput, columns = 3): string[][] {
 
 function SectionGrid({ section }: { section: Section }) {
   const cols = useMemo(
-    () => toColumns(section.books, section.columns ?? 3),
-    [section.books, section.columns]
+    () => toColumns(section.items, section.columns ?? 3),
+    [section.items, section.columns]
   );
 
   return (
