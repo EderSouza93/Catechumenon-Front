@@ -18,7 +18,7 @@ export default function LargerCatechismPage() {
   const [currentPage, setCurrentPage] = useState(1);
   const isSearching = searchQuery.trim().length >= 2;
 
-  const { progress, markLargerCatechismAsRead, isLoading } = useProgress();
+  const { progress, toggleLargerCatechism, isLoading } = useProgress();
 
   const list = useLargerCatechism({
     page: isSearching ? 1 : currentPage,
@@ -56,8 +56,8 @@ export default function LargerCatechismPage() {
               key={r.id}
               title={`Pergunta ${number}`}
               content={r.snippet}
-              isCompleted={progress.largerCatechism.includes(number)}
-              onMarkAsRead={() => markLargerCatechismAsRead(number)}
+              isCompleted={progress.largerCatechism.includes(r.id)}
+              onMarkAsRead={() => toggleLargerCatechism(r.id)}
               searchQuery={searchQuery}
             />
           );
@@ -70,8 +70,8 @@ export default function LargerCatechismPage() {
         subtitle={question.question}
         content={question.answer}
         references={question.bibleRefs}
-        isCompleted={progress.largerCatechism.includes(question.number)}
-        onMarkAsRead={() => markLargerCatechismAsRead(question.number)}
+        isCompleted={progress.largerCatechism.includes(question.id)}
+        onMarkAsRead={() => toggleLargerCatechism(question.id)}
         searchQuery={searchQuery}
       />
     ));

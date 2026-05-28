@@ -19,7 +19,7 @@ export default function ConfessionPage() {
   const [currentPage, setCurrentPage] = useState(1);
   const isSearching = searchQuery.trim().length >= 2;
 
-  const { progress, toggleConfessionSectionAsRead, isLoading } = useProgress();
+  const { progress, toggleConfessionArticle, isLoading } = useProgress();
 
   const list = useConfession({
     page: isSearching ? 1 : currentPage,
@@ -59,14 +59,13 @@ export default function ConfessionPage() {
         .filter((r) => r.type === SearchResultType.ConfessionArticle)
         .map((r) => {
           if (r.type !== SearchResultType.ConfessionArticle) return null;
-          const sectionKey = `${r.chapterNumber}-${r.articleNumber}`;
           return (
             <ContentCard
               key={r.id}
               title={`Capítulo ${r.chapterNumber} – Seção ${r.articleNumber}`}
               content={r.snippet}
-              isCompleted={progress.confessionSections.includes(sectionKey)}
-              onMarkAsRead={() => toggleConfessionSectionAsRead(r.chapterNumber, r.articleNumber)}
+              isCompleted={progress.confessionArticles.includes(r.id)}
+              onMarkAsRead={() => toggleConfessionArticle(r.id)}
               searchQuery={searchQuery}
             />
           );
@@ -76,28 +75,53 @@ export default function ConfessionPage() {
 
   const renderList = () => (
     <div className="space-y-8">
-      {list.items.map((chapter) => (
-        <div key={chapter.id} className="space-y-6">
-          <h2 className="text-2xl font-semibold text-foreground border-b border-border pb-3">
-            Capítulo {chapter.number}: {chapter.title}
-          </h2>
+      {list.items.map((chapter) => {
+        const totalArticles = chapter.articles.length;
+        const articlesRead = chapter.articles.reduce(
+          (count, article) =>
+            progress.confessionArticles.includes(article.id) ? count + 1 : count,
+          0,
+        );
+        const chapterProgress = totalArticles > 0 ? (articlesRead / totalArticles) * 100 : 0;
 
-          <div className="grid gap-6 md:grid-cols-1 lg:grid-cols-2">
-            {chapter.articles.map((article) => (
-              <ContentCard
-                key={`${chapter.id}-${article.id}`}
-                title={`Seção ${article.number}`}
-                content={article.text}
-                sections={article.sections ?? undefined}
-                references={article.bibleRefs}
-                isCompleted={progress.confessionSections.includes(`${chapter.number}-${article.number}`)}
-                onMarkAsRead={() => toggleConfessionSectionAsRead(chapter.number, article.number)}
-                searchQuery={searchQuery}
-              />
-            ))}
+        return (
+          <div key={chapter.id} className="space-y-6">
+            <h2 className="text-2xl font-semibold text-foreground border-b border-border pb-3">
+              Capítulo {chapter.number}: {chapter.title}
+            </h2>
+
+            <div className="grid gap-6 md:grid-cols-1 lg:grid-cols-2">
+              {chapter.articles.map((article) => (
+                <ContentCard
+                  key={article.id}
+                  title={`Seção ${article.number}`}
+                  content={article.text}
+                  sections={article.sections ?? undefined}
+                  references={article.bibleRefs}
+                  isCompleted={progress.confessionArticles.includes(article.id)}
+                  onMarkAsRead={() => toggleConfessionArticle(article.id)}
+                  searchQuery={searchQuery}
+                />
+              ))}
+            </div>
+
+            {totalArticles > 0 && (
+              <div className="bg-secondary rounded-lg p-6">
+                <p className="text-sm text-muted-foreground mb-3">
+                  Capítulo {chapter.number}: {articlesRead} de {totalArticles} artigos lidos
+                  {articlesRead === totalArticles && <span> · concluído</span>}
+                </p>
+                <div className="w-full bg-muted rounded-full h-2">
+                  <div
+                    className="bg-doc-confession h-2 rounded-full transition-all duration-300"
+                    style={{ width: `${chapterProgress}%` }}
+                  />
+                </div>
+              </div>
+            )}
           </div>
-        </div>
-      ))}
+        );
+      })}
     </div>
   );
 
@@ -149,25 +173,6 @@ export default function ConfessionPage() {
               </div>
             )}
 
-            {!isSearching && (
-              <div className="mt-16 text-center">
-                <div className="bg-secondary rounded-lg p-8">
-                  <p className="text-sm text-muted-foreground mb-4">
-                    Capítulos concluídos: {progress.confessionChapters.length} de {total}
-                  </p>
-                  <div className="w-full bg-muted rounded-full h-2">
-                    <div
-                      className="bg-doc-confession h-2 rounded-full transition-all duration-300"
-                      style={{
-                        width: total > 0
-                          ? `${(progress.confessionChapters.length / total) * 100}%`
-                          : '0%',
-                      }}
-                    ></div>
-                  </div>
-                </div>
-              </div>
-            )}
           </>
         )}
       </div>

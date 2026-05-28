@@ -18,7 +18,7 @@ export default function ShorterCatechismPage() {
   const [currentPage, setCurrentPage] = useState(1);
   const isSearching = searchQuery.trim().length >= 2;
 
-  const { progress, markShorterCatechismAsRead, isLoading } = useProgress();
+  const { progress, toggleShorterCatechism, isLoading } = useProgress();
 
   const list = useShorterCatechism({
     page: isSearching ? 1 : currentPage,
@@ -56,8 +56,8 @@ export default function ShorterCatechismPage() {
               key={r.id}
               title={`Pergunta ${number}`}
               content={r.snippet}
-              isCompleted={progress.shorterCatechism.includes(number)}
-              onMarkAsRead={() => markShorterCatechismAsRead(number)}
+              isCompleted={progress.shorterCatechism.includes(r.id)}
+              onMarkAsRead={() => toggleShorterCatechism(r.id)}
               searchQuery={searchQuery}
             />
           );
@@ -70,8 +70,8 @@ export default function ShorterCatechismPage() {
         subtitle={question.question}
         content={question.answer}
         references={question.bibleRefs}
-        isCompleted={progress.shorterCatechism.includes(question.number)}
-        onMarkAsRead={() => markShorterCatechismAsRead(question.number)}
+        isCompleted={progress.shorterCatechism.includes(question.id)}
+        onMarkAsRead={() => toggleShorterCatechism(question.id)}
         searchQuery={searchQuery}
       />
     ));

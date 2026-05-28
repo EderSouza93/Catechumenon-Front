@@ -35,11 +35,16 @@ export interface Resource {
 }
 
 export interface ReadingProgress {
-  confessionChapters: number[];
-  confessionSections: string[];
-  largerCatechism: number[];
-  shorterCatechism: number[];
+  confessionArticles: string[];
+  largerCatechism: string[];
+  shorterCatechism: string[];
 }
+
+export interface ProgressView extends ReadingProgress {
+  updatedAt: string | null;
+}
+
+export type ProgressCollection = keyof ReadingProgress;
 
 export interface PaginatedResult<T> {
   items: T[];
