@@ -2,7 +2,8 @@
 
 import Layout from '@/components/layout/Layout';
 import { useAuth } from '@/contexts/AuthProvider';
-import { useProgress } from '@/hooks/useProgress';
+import { useProgress, countCompletedConfessionChapters } from '@/hooks/useProgress';
+import { useConfession } from '@/hooks/useConfession';
 import ProgressTracker from '@/components/ui/ProgressTracker';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -10,9 +11,9 @@ import { Book, HelpCircle, FileText, ArrowRight } from 'lucide-react';
 import Link from 'next/link';
 import { Skeleton } from '@/components/ui/skeleton';
 
-const TOTAL_CONFESSION_CHAPTERS = 33;
 const TOTAL_LARGER_CATECHISM = 196;
 const TOTAL_SHORTER_CATECHISM = 107;
+const CONFESSION_FETCH_LIMIT = 50;
 
 const documents = [
   {
@@ -44,15 +45,22 @@ const documents = [
 export default function DashboardPage() {
   const { user, isLoading: authLoading } = useAuth();
   const { progress, isLoading: progressLoading } = useProgress();
+  const confession = useConfession({ page: 1, limit: CONFESSION_FETCH_LIMIT });
 
-  const isLoading = authLoading || progressLoading;
+  const isLoading = authLoading || progressLoading || confession.isLoading;
+
+  const confessionChaptersCompleted = countCompletedConfessionChapters(
+    progress.confessionArticles,
+    confession.items,
+  );
+  const totalConfessionChapters = confession.total || confession.items.length;
 
   const getLastAccessed = () => {
     const items = [];
-    if (progress.confessionChapters.length > 0) {
+    if (progress.confessionArticles.length > 0) {
       items.push({
         label: 'Confissão de Fé',
-        detail: `${progress.confessionChapters.length} capítulos lidos`,
+        detail: `${progress.confessionArticles.length} artigos lidos`,
         href: '/confissao',
       });
     }
@@ -76,7 +84,6 @@ export default function DashboardPage() {
   return (
     <Layout>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        {/* Greeting */}
         <div className="mb-8">
           {isLoading ? (
             <Skeleton className="h-10 w-64" />
@@ -91,9 +98,7 @@ export default function DashboardPage() {
         </div>
 
         <div className="grid gap-8 lg:grid-cols-3">
-          {/* Main content (left 2 cols) */}
           <div className="lg:col-span-2 space-y-8">
-            {/* Continue where you left off */}
             {!isLoading && getLastAccessed().length > 0 && (
               <Card>
                 <CardHeader>
@@ -117,7 +122,6 @@ export default function DashboardPage() {
               </Card>
             )}
 
-            {/* Quick access cards */}
             <div>
               <h2 className="text-xl font-semibold mb-4">Documentos</h2>
               <div className="grid gap-4 sm:grid-cols-3">
@@ -143,11 +147,13 @@ export default function DashboardPage() {
             </div>
           </div>
 
-          {/* Progress Tracker (right col) */}
           <div>
             <ProgressTracker
-              totalConfessionChapters={TOTAL_CONFESSION_CHAPTERS}
+              confessionChaptersCompleted={confessionChaptersCompleted}
+              totalConfessionChapters={totalConfessionChapters}
+              largerCatechismCompleted={progress.largerCatechism.length}
               totalLargerCatechism={TOTAL_LARGER_CATECHISM}
+              shorterCatechismCompleted={progress.shorterCatechism.length}
               totalShorterCatechism={TOTAL_SHORTER_CATECHISM}
             />
           </div>

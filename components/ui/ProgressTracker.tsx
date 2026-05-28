@@ -1,44 +1,39 @@
 'use client';
 
-import { useEffect, useState } from 'react';
 import { Progress } from '@/components/ui/progress';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { CheckCircle, Book, HelpCircle } from 'lucide-react';
-import { ReadingProgress } from '@/types';
 
 interface ProgressTrackerProps {
+  confessionChaptersCompleted: number;
   totalConfessionChapters: number;
+  largerCatechismCompleted: number;
   totalLargerCatechism: number;
+  shorterCatechismCompleted: number;
   totalShorterCatechism: number;
 }
 
+function pct(done: number, total: number): number {
+  if (total <= 0) return 0;
+  return (done / total) * 100;
+}
+
 export default function ProgressTracker({
+  confessionChaptersCompleted,
   totalConfessionChapters,
+  largerCatechismCompleted,
   totalLargerCatechism,
-  totalShorterCatechism
+  shorterCatechismCompleted,
+  totalShorterCatechism,
 }: ProgressTrackerProps) {
-  const [progress, setProgress] = useState<ReadingProgress>({
-    confessionChapters: [],
-    confessionSections: [],
-    largerCatechism: [],
-    shorterCatechism: []
-  });
+  const confessionProgress = pct(confessionChaptersCompleted, totalConfessionChapters);
+  const largerCatechismProgress = pct(largerCatechismCompleted, totalLargerCatechism);
+  const shorterCatechismProgress = pct(shorterCatechismCompleted, totalShorterCatechism);
 
-  useEffect(() => {
-    const savedProgress = localStorage.getItem('westminster-progress');
-    if (savedProgress) {
-      setProgress(JSON.parse(savedProgress));
-    }
-  }, []);
-
-  const confessionProgress = (progress.confessionChapters.length / totalConfessionChapters) * 100;
-  const largerCatechismProgress = (progress.largerCatechism.length / totalLargerCatechism) * 100;
-  const shorterCatechismProgress = (progress.shorterCatechism.length / totalShorterCatechism) * 100;
-
-  const overallProgress = (
-    (progress.confessionChapters.length + progress.largerCatechism.length + progress.shorterCatechism.length) /
-    (totalConfessionChapters + totalLargerCatechism + totalShorterCatechism)
-  ) * 100;
+  const overallProgress = pct(
+    confessionChaptersCompleted + largerCatechismCompleted + shorterCatechismCompleted,
+    totalConfessionChapters + totalLargerCatechism + totalShorterCatechism,
+  );
 
   return (
     <Card>
@@ -48,7 +43,7 @@ export default function ProgressTracker({
           Progresso de Estudos
         </CardTitle>
       </CardHeader>
-      
+
       <CardContent className="space-y-6">
         <div>
           <div className="flex items-center justify-between mb-2">
@@ -65,7 +60,7 @@ export default function ProgressTracker({
               <div className="flex items-center justify-between mb-1">
                 <span className="text-xs font-medium">Confissão de Fé</span>
                 <span className="text-xs text-muted-foreground">
-                  {progress.confessionChapters.length}/{totalConfessionChapters}
+                  {confessionChaptersCompleted}/{totalConfessionChapters}
                 </span>
               </div>
               <Progress value={confessionProgress} className="h-1" />
@@ -78,7 +73,7 @@ export default function ProgressTracker({
               <div className="flex items-center justify-between mb-1">
                 <span className="text-xs font-medium">Catecismo Maior</span>
                 <span className="text-xs text-muted-foreground">
-                  {progress.largerCatechism.length}/{totalLargerCatechism}
+                  {largerCatechismCompleted}/{totalLargerCatechism}
                 </span>
               </div>
               <Progress value={largerCatechismProgress} className="h-1" />
@@ -91,7 +86,7 @@ export default function ProgressTracker({
               <div className="flex items-center justify-between mb-1">
                 <span className="text-xs font-medium">Catecismo Menor</span>
                 <span className="text-xs text-muted-foreground">
-                  {progress.shorterCatechism.length}/{totalShorterCatechism}
+                  {shorterCatechismCompleted}/{totalShorterCatechism}
                 </span>
               </div>
               <Progress value={shorterCatechismProgress} className="h-1" />

@@ -28,6 +28,18 @@ const api = {
       headers: buildHeaders(init),
     });
   },
+  patch(path: string, init?: RequestOptions): Promise<Response> {
+    const headers = new Headers(buildHeaders(init));
+    if (init?.body && !headers.has('Content-Type')) {
+      headers.set('Content-Type', 'application/json');
+    }
+    return fetch(`${getBackendUrl()}${path}`, {
+      method: 'PATCH',
+      cache: 'no-store',
+      ...init,
+      headers,
+    });
+  },
 };
 
 export default api;
