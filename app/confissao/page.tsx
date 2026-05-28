@@ -1,42 +1,43 @@
 'use client';
 
-import { useState, useMemo } from 'react';
+import { useState } from 'react';
 import Layout from '@/components/layout/Layout';
 import SearchBar from '@/components/ui/SearchBar';
 import ContentCard from '@/components/ui/ContentCard';
 import { useProgress } from '@/hooks/useProgress';
-import confessionData from '@/data/confession.json';
-import { ConfessionChapter } from '@/types';
-import { paginate } from '@/utils/paginate';
-import { Button } from '@/components/ui/button';
+import { useConfession } from '@/hooks/useConfession';
+import { useDocumentsSearch } from '@/hooks/useDocumentsSearch';
 import { Skeleton } from '@/components/ui/skeleton';
+import PaginationControls from '@/components/ui/PaginationControls';
+import { SearchDocumentType, SearchResultType } from '@/types';
+
+const PAGE_SIZE = 1;
+const SEARCH_PAGE_SIZE = 10;
 
 export default function ConfessionPage() {
   const [searchQuery, setSearchQuery] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
-  const pageSize = 3;
+  const isSearching = searchQuery.trim().length >= 2;
 
-  const { progress, toggleConfessionSectionAsRead, isLoading } = useProgress();
+  const { progress, toggleConfessionArticle, isLoading } = useProgress();
 
-  const confession = confessionData as ConfessionChapter[];
+  const list = useConfession({
+    page: isSearching ? 1 : currentPage,
+    limit: PAGE_SIZE,
+  });
+  const search = useDocumentsSearch({
+    q: searchQuery,
+    type: SearchDocumentType.Confession,
+    page: currentPage,
+    limit: SEARCH_PAGE_SIZE,
+    enabled: isSearching,
+  });
 
-  const filteredContent = useMemo(() => {
-    if (!searchQuery.trim()) return confession;
-
-    return confession.filter(chapter => {
-      const titleMatch = chapter.title.toLowerCase().includes(searchQuery.toLowerCase());
-      const articleMatch = chapter.articles.some(article =>
-        article.text.toLowerCase().includes(searchQuery.toLowerCase())
-      );
-      return titleMatch || articleMatch;
-    });
-  }, [searchQuery, confession]);
-
-  const paginatedContent = useMemo(() => {
-    return paginate(filteredContent, currentPage, pageSize);
-  }, [filteredContent, currentPage]);
-
-  const totalPages = Math.ceil(filteredContent.length / pageSize);
+  const isFetching = isSearching ? search.isLoading : list.isLoading;
+  const fetchError = isSearching ? search.isError : list.isError;
+  const total = isSearching ? search.total : list.total;
+  const pageSize = isSearching ? SEARCH_PAGE_SIZE : PAGE_SIZE;
+  const totalPages = Math.ceil(total / pageSize);
 
   const renderSkeletons = () => (
     <div className="space-y-8">
@@ -52,109 +53,129 @@ export default function ConfessionPage() {
     </div>
   );
 
-  return (
-    <>
-      <Layout>
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-          {/* Header */}
-          <div className="text-center mb-12">
-            <h1 className="text-4xl font-semibold text-foreground mb-4 text-balance">
-              Confissão de Fé de Westminster
-            </h1>
-            <p className="text-lg text-muted-foreground max-w-3xl mx-auto mb-8 font-body leading-relaxed">
-              A Confissão de Fé de Westminster foi elaborada pela Assembleia de Westminster
-              entre 1643 e 1649, constituindo uma das mais importantes declarações doutrinárias
-              do cristianismo reformado.
-            </p>
+  const renderSearchResults = () => (
+    <div className="grid gap-6 md:grid-cols-1 lg:grid-cols-2">
+      {search.results
+        .filter((r) => r.type === SearchResultType.ConfessionArticle)
+        .map((r) => {
+          if (r.type !== SearchResultType.ConfessionArticle) return null;
+          return (
+            <ContentCard
+              key={r.id}
+              title={`Capítulo ${r.chapterNumber} – Seção ${r.articleNumber}`}
+              content={r.snippet}
+              isCompleted={progress.confessionArticles.includes(r.id)}
+              onMarkAsRead={() => toggleConfessionArticle(r.id)}
+              searchQuery={searchQuery}
+            />
+          );
+        })}
+    </div>
+  );
 
-            <div className="max-w-md mx-auto">
-              <SearchBar
-                onSearch={(q) => { setSearchQuery(q); setCurrentPage(1); }}
-                placeholder="Buscar na Confissão de Fé..."
-                value={searchQuery}
-              />
+  const renderList = () => (
+    <div className="space-y-8">
+      {list.items.map((chapter) => {
+        const totalArticles = chapter.articles.length;
+        const articlesRead = chapter.articles.reduce(
+          (count, article) =>
+            progress.confessionArticles.includes(article.id) ? count + 1 : count,
+          0,
+        );
+        const chapterProgress = totalArticles > 0 ? (articlesRead / totalArticles) * 100 : 0;
+
+        return (
+          <div key={chapter.id} className="space-y-6">
+            <h2 className="text-2xl font-semibold text-foreground border-b border-border pb-3">
+              Capítulo {chapter.number}: {chapter.title}
+            </h2>
+
+            <div className="grid gap-6 md:grid-cols-1 lg:grid-cols-2">
+              {chapter.articles.map((article) => (
+                <ContentCard
+                  key={article.id}
+                  title={`Seção ${article.number}`}
+                  content={article.text}
+                  sections={article.sections ?? undefined}
+                  references={article.bibleRefs}
+                  isCompleted={progress.confessionArticles.includes(article.id)}
+                  onMarkAsRead={() => toggleConfessionArticle(article.id)}
+                  searchQuery={searchQuery}
+                />
+              ))}
             </div>
+
+            {totalArticles > 0 && (
+              <div className="bg-secondary rounded-lg p-6">
+                <p className="text-sm text-muted-foreground mb-3">
+                  Capítulo {chapter.number}: {articlesRead} de {totalArticles} artigos lidos
+                  {articlesRead === totalArticles && <span> · concluído</span>}
+                </p>
+                <div className="w-full bg-muted rounded-full h-2">
+                  <div
+                    className="bg-doc-confession h-2 rounded-full transition-all duration-300"
+                    style={{ width: `${chapterProgress}%` }}
+                  />
+                </div>
+              </div>
+            )}
           </div>
+        );
+      })}
+    </div>
+  );
 
-          {isLoading ? renderSkeletons() : (
-            <>
-              {/* Content Grid */}
-              <div className="space-y-8">
-                {paginatedContent.map((chapter) => (
-                  <div key={chapter.id} className="space-y-6">
-                    <h2 className="text-2xl font-semibold text-foreground border-b border-border pb-3">
-                      Capítulo {chapter.id}: {chapter.title}
-                    </h2>
+  return (
+    <Layout>
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <div className="text-center mb-12">
+          <h1 className="text-4xl font-semibold text-foreground mb-4 text-balance">
+            Confissão de Fé de Westminster
+          </h1>
+          <p className="text-lg text-muted-foreground max-w-3xl mx-auto mb-8 font-body leading-relaxed">
+            A Confissão de Fé de Westminster foi elaborada pela Assembleia de Westminster
+            entre 1643 e 1649, constituindo uma das mais importantes declarações doutrinárias
+            do cristianismo reformado.
+          </p>
 
-                    <div className="grid gap-6 md:grid-cols-1 lg:grid-cols-2">
-                      {chapter.articles.map((article) => {
-                        return (
-                          <ContentCard
-                            key={`${chapter.id}-${article.id}`}
-                            title={`Seção ${article.id}`}
-                            content={article.text}
-                            sections={article.sections}
-                            references={article.scriptureReferences}
-                            isCompleted={progress.confessionSections.includes(`${chapter.id}-${article.id}`)}
-                            onMarkAsRead={() => toggleConfessionSectionAsRead(chapter.id, article.id)}
-                            searchQuery={searchQuery}
-                          />
-                        );
-                      })}
-                    </div>
-                  </div>
-                ))}
-              </div>
-
-              {/* Pagination */}
-              <div className="mt-8 flex justify-center items-center space-x-4">
-                <Button
-                  disabled={currentPage === 1}
-                  onClick={() => setCurrentPage(currentPage - 1)}
-                  variant={currentPage === 1 ? 'outline' : 'default'}
-                >
-                  Anterior
-                </Button>
-                <span className="text-sm font-medium">
-                  Página {currentPage} de {totalPages}
-                </span>
-                <Button
-                  disabled={currentPage === totalPages}
-                  onClick={() => setCurrentPage(currentPage + 1)}
-                  variant={currentPage === totalPages ? 'outline' : 'default'}
-                >
-                  Próximo
-                </Button>
-              </div>
-
-              {filteredContent.length === 0 && (
-                <div className="text-center py-12">
-                  <p className="text-muted-foreground font-body">
-                    Nenhum resultado encontrado para &quot;{searchQuery}&quot;.
-                  </p>
-                </div>
-              )}
-
-              {/* Summary */}
-              <div className="mt-16 text-center">
-                <div className="bg-secondary rounded-lg p-8">
-                  <p className="text-sm text-muted-foreground mb-4">
-                    Capítulos concluídos: {progress.confessionChapters.length} de {confession.length}
-                  </p>
-                  <div className="w-full bg-muted rounded-full h-2">
-                    <div
-                      className="bg-doc-confession h-2 rounded-full transition-all duration-300"
-                      style={{
-                        width: `${(progress.confessionChapters.length / confession.length) * 100}%`
-                      }}
-                    ></div>
-                  </div>
-                </div>
-              </div>
-            </>
-          )}
+          <div className="max-w-md mx-auto">
+            <SearchBar
+              onSearch={(q) => { setSearchQuery(q); setCurrentPage(1); }}
+              placeholder="Buscar na Confissão de Fé..."
+              value={searchQuery}
+            />
+          </div>
         </div>
-      </Layout>
-    </>
+
+        {isLoading || isFetching ? renderSkeletons() : fetchError ? (
+          <div className="text-center py-12">
+            <p className="text-muted-foreground font-body">
+              Não foi possível carregar a Confissão de Fé. Tente novamente mais tarde.
+            </p>
+          </div>
+        ) : (
+          <>
+            {isSearching ? renderSearchResults() : renderList()}
+
+            {total > 0 && (
+              <PaginationControls
+                currentPage={currentPage}
+                totalPages={totalPages}
+                onPageChange={setCurrentPage}
+              />
+            )}
+
+            {total === 0 && isSearching && (
+              <div className="text-center py-12">
+                <p className="text-muted-foreground font-body">
+                  Nenhum resultado encontrado para &quot;{searchQuery}&quot;.
+                </p>
+              </div>
+            )}
+
+          </>
+        )}
+      </div>
+    </Layout>
   );
 }

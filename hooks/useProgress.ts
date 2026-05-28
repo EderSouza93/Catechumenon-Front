@@ -1,92 +1,141 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import { ConfessionChapter, ReadingProgress } from '@/types';
-import confessionData from '@/data/confession.json';
+import { useCallback, useEffect, useRef, useState } from 'react';
+import { toast } from 'sonner';
+import { useAuth } from '@/contexts/AuthProvider';
+import { progressClient, type UpdateProgressPayload } from '@/services/progressClient';
+import type { ConfessionChapter, ProgressCollection, ReadingProgress } from '@/types';
+
+const LEGACY_LOCALSTORAGE_KEY = 'westminster-progress';
+
+const EMPTY_PROGRESS: ReadingProgress = {
+  confessionArticles: [],
+  largerCatechism: [],
+  shorterCatechism: [],
+};
+
+function toggleId(list: string[], id: string): string[] {
+  return list.includes(id) ? list.filter((item) => item !== id) : [...list, id];
+}
+
+export function countCompletedConfessionChapters(
+  articleIds: string[],
+  chapters: ConfessionChapter[],
+): number {
+  if (chapters.length === 0) return 0;
+  const read = new Set(articleIds);
+  return chapters.reduce((count, chapter) => {
+    if (chapter.articles.length === 0) return count;
+    const allRead = chapter.articles.every((article) => read.has(article.id));
+    return allRead ? count + 1 : count;
+  }, 0);
+}
 
 export function useProgress() {
-  const [progress, setProgress] = useState<ReadingProgress>({
-    confessionChapters: [],
-    confessionSections: [],
-    largerCatechism: [],
-    shorterCatechism: []
-  });
+  const { isAuthenticated, isLoading: isAuthLoading } = useAuth();
+  const [progress, setProgress] = useState<ReadingProgress>(EMPTY_PROGRESS);
   const [isLoading, setIsLoading] = useState(true);
+  const [isError, setIsError] = useState(false);
+  const [isSyncing, setIsSyncing] = useState(false);
+  const progressRef = useRef(progress);
 
   useEffect(() => {
-    try {
-      const savedProgress = localStorage.getItem('westminster-progress');
-      if (savedProgress) {
-        const parsedProgress = JSON.parse(savedProgress);
-        if (
-          parsedProgress.confessionChapters &&
-          parsedProgress.confessionSections &&
-          parsedProgress.largerCatechism &&
-          parsedProgress.shorterCatechism
-        ) {
-          setProgress(parsedProgress);
-        }
-      }
-    } catch (error) {
-      console.error("Failed to parse progress from localStorage", error);
-    } finally {
+    progressRef.current = progress;
+  }, [progress]);
+
+  useEffect(() => {
+    if (isAuthLoading) return;
+
+    if (!isAuthenticated) {
+      setProgress(EMPTY_PROGRESS);
       setIsLoading(false);
+      setIsError(false);
+      return;
     }
-  }, []);
 
-  const updateAndSaveProgress = (newProgress: ReadingProgress) => {
-    setProgress(newProgress);
-    localStorage.setItem('westminster-progress', JSON.stringify(newProgress));
-  };
+    if (typeof window !== 'undefined') {
+      window.localStorage.removeItem(LEGACY_LOCALSTORAGE_KEY);
+    }
 
-  const toggleProgressItem = (
-    key: 'largerCatechism' | 'shorterCatechism',
-    questionId: number
-  ) => {
-    const list = progress[key];
-    const newList = list.includes(questionId)
-      ? list.filter(id => id !== questionId)
-      : [...list, questionId];
-    
-    updateAndSaveProgress({ ...progress, [key]: newList });
-  };
+    let cancelled = false;
+    setIsLoading(true);
+    setIsError(false);
+    progressClient
+      .getProgress()
+      .then((data) => {
+        if (cancelled) return;
+        setProgress({
+          confessionArticles: data.confessionArticles ?? [],
+          largerCatechism: data.largerCatechism ?? [],
+          shorterCatechism: data.shorterCatechism ?? [],
+        });
+      })
+      .catch((error) => {
+        if (cancelled) return;
+        console.error('Falha ao carregar progresso do servidor', error);
+        setIsError(true);
+        toast.error('Não foi possível carregar seu progresso. Recarregue a página para tentar novamente.');
+      })
+      .finally(() => {
+        if (!cancelled) setIsLoading(false);
+      });
 
-  const toggleConfessionSectionAsRead = (chapterId: number, articleId: number) => {
-    const sectionKey = `${chapterId}-${articleId}`;
-    const newSections = progress.confessionSections.includes(sectionKey)
-      ? progress.confessionSections.filter(id => id !== sectionKey)
-      : [...progress.confessionSections, sectionKey];
+    return () => {
+      cancelled = true;
+    };
+  }, [isAuthenticated, isAuthLoading]);
 
-    const chapter = (confessionData as ConfessionChapter[]).find(c => c.id === chapterId);
-    let newChapters = [...progress.confessionChapters];
+  const applyToggle = useCallback(
+    async (collection: ProgressCollection, id: string) => {
+      const snapshot = progressRef.current;
+      const nextList = toggleId(snapshot[collection], id);
+      const nextProgress: ReadingProgress = { ...snapshot, [collection]: nextList };
+      setProgress(nextProgress);
+      setIsSyncing(true);
+      setIsError(false);
 
-    if (chapter) {
-      const allArticlesInChapter = chapter.articles.map(a => `${chapter.id}-${a.id}`);
-      const allArticlesRead = allArticlesInChapter.every(key => newSections.includes(key));
-
-      if (allArticlesRead) {
-        if (!newChapters.includes(chapterId)) {
-          newChapters.push(chapterId);
-        }
-      } else {
-        newChapters = newChapters.filter(id => id !== chapterId);
+      const payload: UpdateProgressPayload = { [collection]: nextList };
+      try {
+        const result = await progressClient.updateProgress(payload);
+        setProgress({
+          confessionArticles: result.confessionArticles ?? nextList,
+          largerCatechism: result.largerCatechism ?? nextProgress.largerCatechism,
+          shorterCatechism: result.shorterCatechism ?? nextProgress.shorterCatechism,
+        });
+      } catch (error) {
+        console.error('Falha ao sincronizar progresso', error);
+        setProgress(snapshot);
+        setIsError(true);
+        toast.error('Não foi possível salvar seu progresso. Tente novamente.');
+      } finally {
+        setIsSyncing(false);
       }
-    }
-    
-    updateAndSaveProgress({
-      ...progress,
-      confessionSections: newSections,
-      confessionChapters: newChapters,
-    });
-  };
+    },
+    [],
+  );
+
+  const toggleConfessionArticle = useCallback(
+    (articleId: string) => applyToggle('confessionArticles', articleId),
+    [applyToggle],
+  );
+
+  const toggleLargerCatechism = useCallback(
+    (questionId: string) => applyToggle('largerCatechism', questionId),
+    [applyToggle],
+  );
+
+  const toggleShorterCatechism = useCallback(
+    (questionId: string) => applyToggle('shorterCatechism', questionId),
+    [applyToggle],
+  );
 
   return {
     progress,
     isLoading,
-    toggleConfessionSectionAsRead,
-    markLargerCatechismAsRead: (questionId: number) =>
-      toggleProgressItem('largerCatechism', questionId),
-    markShorterCatechismAsRead: (questionId: number) =>
-      toggleProgressItem('shorterCatechism', questionId),
+    isError,
+    isSyncing,
+    toggleConfessionArticle,
+    toggleLargerCatechism,
+    toggleShorterCatechism,
   };
 }

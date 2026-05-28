@@ -1,15 +1,7 @@
 "use client";
 
 import { useState, useCallback } from 'react';
-
-interface BibleApiResponse {
-  reference: string;
-  verses: Array<{ book_id: string; book_name: string; chapter: number; verse: number; text: string; }>;
-  text: string;
-  translation_id: string;
-  translation_name: string;
-  translation_note: string;
-}
+import { bibleClient } from '@/services/bibleClient';
 
 export function useVerseDialog() {
   const [isOpen, setIsOpen] = useState(false);
@@ -24,11 +16,7 @@ export function useVerseDialog() {
     setVerseContent(null);
 
     try {
-      const response = await fetch(`/api/bible?reference=${encodeURIComponent(reference)}`);
-      if (!response.ok) {
-        throw new Error('Falha ao buscar o versículo.');
-      }
-      const data: BibleApiResponse = await response.json();
+      const data = await bibleClient.getReference(reference);
       setVerseContent(data.text);
     } catch (error) {
       console.error(error);

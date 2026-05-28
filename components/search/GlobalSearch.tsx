@@ -11,11 +11,21 @@ import {
   CommandGroup,
   CommandItem,
 } from '@/components/ui/command';
-import { Dialog, DialogContent } from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog';
 import confessionData from '@/data/confession.json';
 import largerCatechismData from '@/data/larger-catechism.json';
 import shorterCatechismData from '@/data/shorter-catechism.json';
-import { ConfessionChapter, CatechismQuestion } from '@/types';
+
+type LegacyConfessionChapter = {
+  id: number;
+  title: string;
+  articles: Array<{ id: number; text: string }>;
+};
+type LegacyCatechismQuestion = {
+  id: number;
+  question: string;
+  answer: string;
+};
 
 interface GlobalSearchProps {
   open: boolean;
@@ -35,9 +45,9 @@ export default function GlobalSearch({ open, onOpenChange }: GlobalSearchProps) 
   const [query, setQuery] = useState('');
   const router = useRouter();
 
-  const confession = confessionData as ConfessionChapter[];
-  const largerCatechism = largerCatechismData as CatechismQuestion[];
-  const shorterCatechism = shorterCatechismData as CatechismQuestion[];
+  const confession = confessionData as unknown as LegacyConfessionChapter[];
+  const largerCatechism = largerCatechismData as unknown as LegacyCatechismQuestion[];
+  const shorterCatechism = shorterCatechismData as unknown as LegacyCatechismQuestion[];
 
   useEffect(() => {
     if (!open) setQuery('');
@@ -116,6 +126,7 @@ export default function GlobalSearch({ open, onOpenChange }: GlobalSearchProps) 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="overflow-hidden p-0 shadow-lg">
+        <DialogTitle className="sr-only">Buscar em todos os documentos</DialogTitle>
         <Command
           shouldFilter={false}
           className="[&_[cmdk-group-heading]]:px-2 [&_[cmdk-group-heading]]:font-medium [&_[cmdk-group-heading]]:text-muted-foreground [&_[cmdk-group]:not([hidden])_~[cmdk-group]]:pt-0 [&_[cmdk-group]]:px-2 [&_[cmdk-input-wrapper]_svg]:h-5 [&_[cmdk-input-wrapper]_svg]:w-5 [&_[cmdk-input]]:h-12 [&_[cmdk-item]]:px-2 [&_[cmdk-item]]:py-3 [&_[cmdk-item]_svg]:h-5 [&_[cmdk-item]_svg]:w-5"

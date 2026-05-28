@@ -1,15 +1,15 @@
+'use client';
+
 import Link from 'next/link';
 import Layout from '@/components/layout/Layout';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Book, HelpCircle, FileText, ExternalLink } from 'lucide-react';
-import ProgressTracker from '@/components/ui/ProgressTracker';
-
-const TOTAL_CONFESSION_CHAPTERS = 33;
-const TOTAL_LARGER_CATECHISM = 196;
-const TOTAL_SHORTER_CATECHISM = 107;
+import { Book, HelpCircle, FileText, LogIn, ArrowRight } from 'lucide-react';
+import { useAuth } from '@/contexts/AuthProvider';
 
 export default function Home() {
+  const { isAuthenticated, isLoading } = useAuth();
+
   return (
     <Layout>
       <div className="min-h-screen">
@@ -25,18 +25,29 @@ export default function Home() {
               proporcionando acesso organizado à Confissão de Fé e aos Catecismos de Westminster.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Button asChild size="lg">
-                <Link href="/confissao">
-                  <Book className="mr-2 h-5 w-5" />
-                  Começar Estudos
-                </Link>
-              </Button>
-              <Button asChild variant="outline" size="lg">
-                <Link href="/recursos">
-                  <ExternalLink className="mr-2 h-5 w-5" />
-                  Ver Recursos
-                </Link>
-              </Button>
+              {!isLoading && isAuthenticated ? (
+                <Button asChild size="lg">
+                  <Link href="/dashboard">
+                    <ArrowRight className="mr-2 h-5 w-5" />
+                    Ir para o Dashboard
+                  </Link>
+                </Button>
+              ) : (
+                <>
+                  <Button asChild size="lg">
+                    <Link href="/login">
+                      <LogIn className="mr-2 h-5 w-5" />
+                      Fazer Login
+                    </Link>
+                  </Button>
+                  <Button asChild variant="outline" size="lg">
+                    <Link href="#documentos">
+                      <Book className="mr-2 h-5 w-5" />
+                      Ver Documentos
+                    </Link>
+                  </Button>
+                </>
+              )}
             </div>
           </div>
         </section>
@@ -49,7 +60,7 @@ export default function Home() {
         </div>
 
         {/* Documents Grid */}
-        <section className="py-20 px-4">
+        <section id="documentos" className="py-20 px-4">
           <div className="max-w-6xl mx-auto">
             <h2 className="text-3xl font-semibold text-center text-foreground mb-14 text-balance">
               Documentos Disponíveis
@@ -70,9 +81,6 @@ export default function Home() {
                     Documento fundamental que expressa sistematicamente as crenças
                     reformadas sobre Deus, salvação, escrituras e vida cristã.
                   </p>
-                  <Button asChild className="w-full" variant="outline">
-                    <Link href="/confissao">Estudar Agora</Link>
-                  </Button>
                 </CardContent>
               </Card>
 
@@ -91,9 +99,6 @@ export default function Home() {
                     Explanação mais completa e detalhada das doutrinas,
                     ideal para estudo aprofundado e ensino teológico.
                   </p>
-                  <Button asChild className="w-full" variant="outline">
-                    <Link href="/catecismo-maior">Explorar</Link>
-                  </Button>
                 </CardContent>
               </Card>
 
@@ -112,42 +117,11 @@ export default function Home() {
                     Formato conciso e memorável, perfeito para educação cristã
                     básica e memorização das verdades fundamentais.
                   </p>
-                  <Button asChild className="w-full" variant="outline">
-                    <Link href="/catecismo-menor">Começar</Link>
-                  </Button>
                 </CardContent>
               </Card>
             </div>
           </div>
         </section>
-
-        {/* Progress Section */}
-        <section className="py-20 px-4 section-warm">
-          <div className="max-w-4xl mx-auto">
-            <div className="text-center mb-12">
-              <h2 className="text-3xl font-semibold text-foreground mb-4 text-balance">
-                Acompanhe seu Progresso
-              </h2>
-              <p className="text-muted-foreground font-body">
-                Mantenha registro dos seus estudos e celebre cada etapa concluída
-              </p>
-            </div>
-            <div className="max-w-md mx-auto">
-              <ProgressTracker
-                totalConfessionChapters={TOTAL_CONFESSION_CHAPTERS}
-                totalLargerCatechism={TOTAL_LARGER_CATECHISM}
-                totalShorterCatechism={TOTAL_SHORTER_CATECHISM}
-              />
-            </div>
-          </div>
-        </section>
-
-        {/* Ornamental Divider */}
-        <div className="max-w-6xl mx-auto px-4">
-          <div className="divider-ornament">
-            <span className="text-muted-foreground/40 text-lg font-display">&#10053;</span>
-          </div>
-        </div>
 
         {/* Features Section */}
         <section className="py-20 px-4">

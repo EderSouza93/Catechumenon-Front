@@ -5,13 +5,12 @@ import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogTitle, DialogTrigger, DialogHeader, DialogFooter } from '@/components/ui/dialog';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
-import { getBibleApiUrl } from '@/lib/bibleUtils';
+import { bibleClient } from '@/services/bibleClient';
 import HighlightText from '@/components/ui/HighlightText';
 
-type BooksInput = string[] | string[][];
 interface Section {
   title: string;
-  books: BooksInput;
+  items: string[];
   columns?: number;
 }
 
@@ -26,12 +25,8 @@ interface ContentCardProps {
   searchQuery?: string;
 }
 
-/** Normaliza books em colunas */
-function toColumns(books: BooksInput, columns = 3): string[][] {
-  if (Array.isArray(books) && books.length > 0 && Array.isArray(books[0])) {
-    return books as string[][];
-  }
-  const flat = (books as string[]).filter(Boolean);
+function toColumns(items: string[], columns = 3): string[][] {
+  const flat = items.filter(Boolean);
   const cols: string[][] = Array.from({ length: columns }, () => []);
   flat.forEach((item, i) => {
     cols[i % columns].push(item);
@@ -41,8 +36,8 @@ function toColumns(books: BooksInput, columns = 3): string[][] {
 
 function SectionGrid({ section }: { section: Section }) {
   const cols = useMemo(
-    () => toColumns(section.books, section.columns ?? 3),
-    [section.books, section.columns]
+    () => toColumns(section.items, section.columns ?? 3),
+    [section.items, section.columns]
   );
 
   return (
@@ -70,19 +65,7 @@ const ReferencePopover = ({ reference }: { reference: string }) => {
   const fetchVerse = async () => {
     if (content !== "Carregando...") return;
     try {
-      const apiUrl = getBibleApiUrl(reference);
-      if (!apiUrl || !apiUrl.includes("reference=")) {
-        throw new Error("Referência inválida.");
-      }
-
-      const response = await fetch(apiUrl);
-      const data = await response.json();
-
-      if (!response.ok) {
-        const errorMessage = data?.error || `HTTP error! status: ${response.status}`;
-        throw new Error(errorMessage);
-      }
-
+      const data = await bibleClient.getReference(reference);
       if (data.text) {
         setContent(data.text.trim());
       } else {
@@ -90,7 +73,7 @@ const ReferencePopover = ({ reference }: { reference: string }) => {
       }
     } catch (error) {
       console.error(`Erro ao buscar a referência "${reference}":`, error);
-      setContent(`Falha ao carregar. ${error instanceof Error ? error.message : 'Erro desconhecido'}`);
+      setContent('Falha ao carregar referência biblica');
     }
   };
 
@@ -178,7 +161,15 @@ export default function ContentCard({
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
         <Card
-          className={`cursor-pointer transition-all duration-200 hover:shadow-warm-lg ${
+          role="button"
+          tabIndex={0}
+          onKeyDown={(e: React.KeyboardEvent) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+              e.preventDefault();
+              handleClick();
+            }
+          }}
+          className={`cursor-pointer transition-all duration-200 hover:shadow-warm-lg focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 ${
             read ? 'ring-2 ring-primary/30 bg-primary/5 dark:bg-primary/10' : ''
           }`}
           onClick={handleClick}

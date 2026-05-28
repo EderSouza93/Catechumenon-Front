@@ -8,7 +8,7 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ error: 'Não autenticado.' }, { status: 401 });
   }
   try {
-    const backendRes = await documentsServices.getConfession(request.nextUrl.searchParams, token);
+    const backendRes = await documentsServices.searchDocuments(request.nextUrl.searchParams, token);
     const body = await backendRes.text();
     return new NextResponse(body, {
       status: backendRes.status,
