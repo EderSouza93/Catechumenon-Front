@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogTitle, DialogTrigger, DialogHeader, DialogFooter } from '@/components/ui/dialog';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
-import { getBibleApiUrl } from '@/lib/bibleUtils';
+import { bibleClient } from '@/services/bibleClient';
 import HighlightText from '@/components/ui/HighlightText';
 
 interface Section {
@@ -65,19 +65,7 @@ const ReferencePopover = ({ reference }: { reference: string }) => {
   const fetchVerse = async () => {
     if (content !== "Carregando...") return;
     try {
-      const apiUrl = getBibleApiUrl(reference);
-      if (!apiUrl || !apiUrl.includes("reference=")) {
-        throw new Error("Referência inválida.");
-      }
-
-      const response = await fetch(apiUrl);
-      const data = await response.json();
-
-      if (!response.ok) {
-        const errorMessage = data?.error || `HTTP error! status: ${response.status}`;
-        throw new Error(errorMessage);
-      }
-
+      const data = await bibleClient.getReference(reference);
       if (data.text) {
         setContent(data.text.trim());
       } else {
@@ -85,7 +73,7 @@ const ReferencePopover = ({ reference }: { reference: string }) => {
       }
     } catch (error) {
       console.error(`Erro ao buscar a referência "${reference}":`, error);
-      setContent(`Falha ao carregar. ${error instanceof Error ? error.message : 'Erro desconhecido'}`);
+      setContent('Falha ao carregar referência biblica');
     }
   };
 

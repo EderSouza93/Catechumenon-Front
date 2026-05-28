@@ -71,7 +71,7 @@ Catechumenon é uma aplicação web front-end dedicada a fornecer acesso a docum
 ```
 app/
   api/auth/          # Proxy de autenticação para o back-end Nest.js (login, register, logout, me)
-  api/bible/         # Proxy para API da Bíblia
+  api/bible/         # Proxy para o endpoint /bible do back-end Nest.js
   api/search/        # API de busca nos documentos
   api/catechism/     # APIs dos catecismos
   api/confession/    # API da confissão
