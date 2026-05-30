@@ -40,8 +40,15 @@ export interface ReadingProgress {
   shorterCatechism: string[];
 }
 
+export interface ResumePosition {
+  shorterCatechism: { number: number } | null;
+  largerCatechism: { number: number } | null;
+  confession: { chapterNumber: number; articleId: string } | null;
+}
+
 export interface ProgressView extends ReadingProgress {
   updatedAt: string | null;
+  resume: ResumePosition;
 }
 
 export type ProgressCollection = keyof ReadingProgress;
