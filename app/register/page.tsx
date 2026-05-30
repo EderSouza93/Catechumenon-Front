@@ -6,7 +6,7 @@ import Link from 'next/link';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import { Book, UserPlus } from 'lucide-react';
+import { Book, UserPlus, Eye, EyeOff } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthProvider';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -21,14 +21,20 @@ import {
 } from '@/components/ui/card';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 
-const registerSchema = z.object({
-  name: z.string().min(2, 'Nome deve ter ao menos 2 caracteres').max(120, 'Nome muito longo'),
-  email: z.string().email('E-mail inválido').max(254, 'E-mail muito longo'),
-  password: z
-    .string()
-    .min(6, 'Senha deve ter ao menos 6 caracteres')
-    .max(128, 'Senha muito longa'),
-});
+const registerSchema = z
+  .object({
+    name: z.string().min(2, 'Nome deve ter ao menos 2 caracteres').max(120, 'Nome muito longo'),
+    email: z.string().email('E-mail inválido').max(254, 'E-mail muito longo'),
+    password: z
+      .string()
+      .min(6, 'Senha deve ter ao menos 6 caracteres')
+      .max(128, 'Senha muito longa'),
+    confirmPassword: z.string().min(1, 'Confirme a senha'),
+  })
+  .refine((data) => data.password === data.confirmPassword, {
+    message: 'As senhas não coincidem',
+    path: ['confirmPassword'],
+  });
 
 type RegisterForm = z.infer<typeof registerSchema>;
 
@@ -37,16 +43,19 @@ export default function RegisterPage() {
   const router = useRouter();
   const [error, setError] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   const form = useForm<RegisterForm>({
     resolver: zodResolver(registerSchema),
-    defaultValues: { name: '', email: '', password: '' },
+    defaultValues: { name: '', email: '', password: '', confirmPassword: '' },
   });
 
   const onSubmit = async (data: RegisterForm) => {
     setError('');
     setIsSubmitting(true);
-    const result = await register(data);
+    const { confirmPassword: _confirmPassword, ...credentials } = data;
+    const result = await register(credentials);
     setIsSubmitting(false);
 
     if (result.success) {
@@ -109,16 +118,57 @@ export default function RegisterPage() {
             </div>
             <div className="space-y-2">
               <Label htmlFor="password">Senha</Label>
-              <Input
-                id="password"
-                type="password"
-                placeholder="Mínimo 6 caracteres"
-                autoComplete="new-password"
-                {...form.register('password')}
-              />
+              <div className="relative">
+                <Input
+                  id="password"
+                  type={showPassword ? 'text' : 'password'}
+                  placeholder="Mínimo 6 caracteres"
+                  autoComplete="new-password"
+                  className="pr-10"
+                  {...form.register('password')}
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword((v) => !v)}
+                  className="absolute inset-y-0 right-0 flex items-center pr-3 text-muted-foreground hover:text-foreground focus:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded-md"
+                  aria-label={showPassword ? 'Ocultar senha' : 'Mostrar senha'}
+                  aria-pressed={showPassword}
+                  tabIndex={-1}
+                >
+                  {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                </button>
+              </div>
               {form.formState.errors.password && (
                 <p className="text-sm text-destructive">
                   {form.formState.errors.password.message}
+                </p>
+              )}
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="confirmPassword">Confirmar senha</Label>
+              <div className="relative">
+                <Input
+                  id="confirmPassword"
+                  type={showConfirmPassword ? 'text' : 'password'}
+                  placeholder="Repita a senha"
+                  autoComplete="new-password"
+                  className="pr-10"
+                  {...form.register('confirmPassword')}
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowConfirmPassword((v) => !v)}
+                  className="absolute inset-y-0 right-0 flex items-center pr-3 text-muted-foreground hover:text-foreground focus:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded-md"
+                  aria-label={showConfirmPassword ? 'Ocultar senha' : 'Mostrar senha'}
+                  aria-pressed={showConfirmPassword}
+                  tabIndex={-1}
+                >
+                  {showConfirmPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                </button>
+              </div>
+              {form.formState.errors.confirmPassword && (
+                <p className="text-sm text-destructive">
+                  {form.formState.errors.confirmPassword.message}
                 </p>
               )}
             </div>
