@@ -1,18 +1,37 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import Layout from '@/components/layout/Layout';
 import SearchBar from '@/components/ui/SearchBar';
 import ContentCard from '@/components/ui/ContentCard';
 import { useProgress } from '@/hooks/useProgress';
 import { useConfession } from '@/hooks/useConfession';
 import { useDocumentsSearch } from '@/hooks/useDocumentsSearch';
+import { useAuth } from '@/contexts/AuthProvider';
 import { Skeleton } from '@/components/ui/skeleton';
 import PaginationControls from '@/components/ui/PaginationControls';
-import { SearchDocumentType, SearchResultType } from '@/types';
+import { ConfessionArticle, ConfessionChapter, SearchDocumentType, SearchResultType } from '@/types';
 
 const PAGE_SIZE = 1;
 const SEARCH_PAGE_SIZE = 10;
+
+type ResumeMarker = { touched: number[]; completed: number[] };
+
+function readResumeMarker(key: string): ResumeMarker {
+  try {
+    const raw = window.localStorage.getItem(key);
+    if (!raw) return { touched: [], completed: [] };
+    const parsed = JSON.parse(raw);
+    // Formato antigo: array simples de capítulos tocados.
+    if (Array.isArray(parsed)) return { touched: parsed, completed: [] };
+    return {
+      touched: Array.isArray(parsed?.touched) ? parsed.touched : [],
+      completed: Array.isArray(parsed?.completed) ? parsed.completed : [],
+    };
+  } catch {
+    return { touched: [], completed: [] };
+  }
+}
 
 export default function ConfessionPage() {
   const [searchQuery, setSearchQuery] = useState('');
@@ -20,6 +39,12 @@ export default function ConfessionPage() {
   const isSearching = searchQuery.trim().length >= 2;
 
   const { progress, toggleConfessionArticle, isLoading } = useProgress();
+  const { user } = useAuth();
+  const resumeKey = user ? `catechumenon:resume:confessionArticles:${user.id}` : null;
+
+  const [resumeTargetPage, setResumeTargetPage] = useState<number | null>(null);
+  const hasRestoredRef = useRef(false);
+  const hasScrolledRef = useRef(false);
 
   const list = useConfession({
     page: isSearching ? 1 : currentPage,
@@ -38,6 +63,84 @@ export default function ConfessionPage() {
   const total = isSearching ? search.total : list.total;
   const pageSize = isSearching ? SEARCH_PAGE_SIZE : PAGE_SIZE;
   const totalPages = Math.ceil(total / pageSize);
+
+  // Ao carregar, retoma no próximo capítulo não concluído.
+  // Como há um capítulo por página (PAGE_SIZE = 1), o marcador guarda dois conjuntos de
+  // `number`s de capítulo: `touched` (algum artigo lido) e `completed` (todos os artigos lidos).
+  useEffect(() => {
+    if (hasRestoredRef.current || !resumeKey || isSearching) return;
+    if (isLoading || list.isLoading || total === 0) return;
+
+    hasRestoredRef.current = true;
+
+    const { touched, completed } = readResumeMarker(resumeKey);
+    const maxTouched = touched.length ? Math.max(...touched) : 0;
+    const maxCompleted = completed.length ? Math.max(...completed) : 0;
+    if (maxTouched === 0 && maxCompleted === 0) return; // nada lido ainda
+
+    // Se o último capítulo tocado ainda está incompleto, retoma nele; senão, no próximo.
+    const targetChapter = Math.max(maxTouched, maxCompleted + 1);
+    const targetPage = Math.min(targetChapter, totalPages);
+    setResumeTargetPage(targetPage);
+    if (targetPage !== currentPage) setCurrentPage(targetPage);
+  }, [resumeKey, isSearching, isLoading, list.isLoading, total, totalPages, currentPage]);
+
+  // Depois que o capítulo-alvo carrega, rola até o primeiro artigo ainda não concluído.
+  useEffect(() => {
+    if (resumeTargetPage === null || hasScrolledRef.current) return;
+    if (isSearching || currentPage !== resumeTargetPage) return;
+    if (list.isLoading || list.items.length === 0) return;
+
+    // Garante que os itens em tela já são os do capítulo-alvo (evita o capítulo
+    // anterior, ainda em cache, durante a troca de página).
+    const chapter = list.items[0];
+    if (!chapter || chapter.number !== resumeTargetPage) return;
+
+    hasScrolledRef.current = true;
+    const firstUnread = chapter.articles.find(
+      (a) => !progress.confessionArticles.includes(a.id),
+    );
+    if (firstUnread) {
+      const el = document.getElementById(`a-${firstUnread.id}`);
+      el?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  }, [resumeTargetPage, currentPage, isSearching, list.isLoading, list.items, progress.confessionArticles]);
+
+  const handleMarkRead = (
+    chapter: ConfessionChapter,
+    article: ConfessionArticle,
+    read: boolean,
+  ) => {
+    toggleConfessionArticle(article.id);
+    if (!resumeKey) return;
+    try {
+      const { touched, completed } = readResumeMarker(resumeKey);
+      const touchedSet = new Set(touched);
+      const completedSet = new Set(completed);
+
+      // Quantos artigos do capítulo ficarão lidos após este toggle.
+      const readIds = new Set(
+        chapter.articles
+          .map((a) => a.id)
+          .filter((id) => progress.confessionArticles.includes(id)),
+      );
+      if (read) readIds.add(article.id);
+      else readIds.delete(article.id);
+
+      const totalArticles = chapter.articles.length;
+      if (readIds.size > 0) touchedSet.add(chapter.number);
+      else touchedSet.delete(chapter.number);
+      if (totalArticles > 0 && readIds.size === totalArticles) completedSet.add(chapter.number);
+      else completedSet.delete(chapter.number);
+
+      window.localStorage.setItem(
+        resumeKey,
+        JSON.stringify({ touched: Array.from(touchedSet), completed: Array.from(completedSet) }),
+      );
+    } catch {
+      // ignora erros de storage (modo privado, quota, etc.)
+    }
+  };
 
   const renderSkeletons = () => (
     <div className="space-y-8">
@@ -92,16 +195,17 @@ export default function ConfessionPage() {
 
             <div className="grid gap-6">
               {chapter.articles.map((article) => (
-                <ContentCard
-                  key={article.id}
-                  title={`Seção ${article.number}`}
-                  content={article.text}
-                  sections={article.sections ?? undefined}
-                  references={article.bibleRefs}
-                  isCompleted={progress.confessionArticles.includes(article.id)}
-                  onMarkAsRead={() => toggleConfessionArticle(article.id)}
-                  searchQuery={searchQuery}
-                />
+                <div key={article.id} id={`a-${article.id}`} className="scroll-mt-24">
+                  <ContentCard
+                    title={`Seção ${article.number}`}
+                    content={article.text}
+                    sections={article.sections ?? undefined}
+                    references={article.bibleRefs}
+                    isCompleted={progress.confessionArticles.includes(article.id)}
+                    onMarkAsRead={(read) => handleMarkRead(chapter, article, read)}
+                    searchQuery={searchQuery}
+                  />
+                </div>
               ))}
             </div>
 
