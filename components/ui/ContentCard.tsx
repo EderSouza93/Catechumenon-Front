@@ -2,8 +2,6 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { useMemo, useState } from 'react';
 import { Button } from "@/components/ui/button";
-import { Dialog, DialogContent, DialogTitle, DialogTrigger, DialogHeader, DialogFooter } from '@/components/ui/dialog';
-import { ScrollArea } from '@/components/ui/scroll-area';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { bibleClient } from '@/services/bibleClient';
 import HighlightText from '@/components/ui/HighlightText';
@@ -120,19 +118,13 @@ export default function ContentCard({
   onMarkAsRead,
   searchQuery = '',
 }: ContentCardProps) {
-  const [open, setOpen] = useState(false);
   const [read, setRead] = useState(isCompleted);
 
   const hasSections = Array.isArray(sections) && sections.length > 0;
 
-  const handleClick = () => setOpen(true);
-
-  const handleDialogClose = (markRead: boolean) => {
-    setOpen(false);
-    if (markRead && !read) {
-      setRead(true);
-      onMarkAsRead?.(true);
-    }
+  const handleToggleRead = () => {
+    setRead((prev) => !prev);
+    onMarkAsRead?.(!read);
   };
 
   const Body = (
@@ -158,78 +150,47 @@ export default function ContentCard({
   );
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger asChild>
-        <Card
-          role="button"
-          tabIndex={0}
-          onKeyDown={(e: React.KeyboardEvent) => {
-            if (e.key === 'Enter' || e.key === ' ') {
-              e.preventDefault();
-              handleClick();
-            }
-          }}
-          className={`cursor-pointer transition-all duration-200 hover:shadow-warm-lg focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 ${
-            read ? 'ring-2 ring-primary/30 bg-primary/5 dark:bg-primary/10' : ''
-          }`}
-          onClick={handleClick}
-        >
-          <CardHeader className="pb-3">
-            <div className="flex items-start justify-between">
-              <div>
-                <CardTitle className="text-lg font-semibold text-foreground">
-                  <HighlightText text={title} query={searchQuery} />
-                </CardTitle>
-                {subtitle && (
-                  <p className="text-sm text-muted-foreground mt-1">
-                    <HighlightText text={subtitle} query={searchQuery} />
-                  </p>
-                )}
-              </div>
-              {read && (
-                <Badge variant="secondary" className="bg-primary/10 text-primary dark:bg-primary/20 dark:text-primary">
-                  Lido
-                </Badge>
-              )}
-            </div>
-          </CardHeader>
-
-          <CardContent>
-            {read ? Body : (
-              <p className="text-sm text-muted-foreground leading-relaxed mb-4">
-                Ver mais...
+    <Card
+      className={`transition-all duration-200 hover:shadow-warm-lg ${
+        read ? 'ring-2 ring-primary/30 bg-primary/5 dark:bg-primary/10' : ''
+      }`}
+    >
+      <CardHeader className="pb-3">
+        <div className="flex items-start justify-between gap-3">
+          <div>
+            <CardTitle className="text-lg font-semibold text-foreground">
+              <HighlightText text={title} query={searchQuery} />
+            </CardTitle>
+            {subtitle && (
+              <p className="text-sm text-muted-foreground mt-1">
+                <HighlightText text={subtitle} query={searchQuery} />
               </p>
             )}
-          </CardContent>
-        </Card>
-      </DialogTrigger>
+          </div>
+          <button
+            type="button"
+            onClick={handleToggleRead}
+            aria-pressed={read}
+            aria-label={read ? 'Desmarcar como lido' : 'Marcar como lido'}
+            className="shrink-0 rounded-full focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
+          >
+            <Badge
+              variant={read ? 'secondary' : 'outline'}
+              className={`cursor-pointer transition-colors ${
+                read
+                  ? 'bg-primary/10 text-primary dark:bg-primary/20 dark:text-primary'
+                  : 'text-muted-foreground hover:text-foreground'
+              }`}
+            >
+              {read ? 'Lido' : 'Marcar como lido'}
+            </Badge>
+          </button>
+        </div>
+      </CardHeader>
 
-      <DialogContent className="max-w-2xl">
-        <DialogHeader>
-          <DialogTitle>{title}</DialogTitle>
-        </DialogHeader>
-
-        {subtitle && (
-          <p className="text-sm text-muted-foreground mt-1">
-            <HighlightText text={subtitle} query={searchQuery} />
-          </p>
-        )}
-
-        <ScrollArea className="max-h-[70vh] pr-6">
-          {Body}
-        </ScrollArea>
-
-        <DialogFooter>
-          {!read && (
-            <Button variant="secondary" onClick={() => handleDialogClose(true)}>
-              Marcar como lido
-            </Button>
-          )}
-          <Button variant="outline" onClick={() => handleDialogClose(false)}>
-            Fechar
-          </Button>
-        </DialogFooter>
-      </DialogContent>
-    </Dialog>
+      <CardContent>
+        {Body}
+      </CardContent>
+    </Card>
   );
 }

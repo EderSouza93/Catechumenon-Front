@@ -38,7 +38,7 @@ export default function ShorterCatechismPage() {
   const totalPages = Math.ceil(total / PAGE_SIZE);
 
   const renderSkeletons = () => (
-    <div className="grid gap-6 md:grid-cols-1 lg:grid-cols-2">
+    <div className="grid gap-6">
       {[...Array(6)].map((_, i) => (
         <Skeleton key={i} className="h-56 w-full rounded-xl" />
       ))}
@@ -107,7 +107,7 @@ export default function ShorterCatechismPage() {
           </div>
         ) : (
           <>
-            <div className="grid gap-6 md:grid-cols-1 lg:grid-cols-2">
+            <div className="grid gap-6">
               {renderCards()}
             </div>
 

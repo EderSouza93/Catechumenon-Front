@@ -44,7 +44,7 @@ export default function ConfessionPage() {
       {[...Array(3)].map((_, i) => (
         <div key={i} className="space-y-6">
           <Skeleton className="h-8 w-1/2 rounded-lg" />
-          <div className="grid gap-6 md:grid-cols-1 lg:grid-cols-2">
+          <div className="grid gap-6">
             <Skeleton className="h-56 w-full rounded-xl" />
             <Skeleton className="h-56 w-full rounded-xl" />
           </div>
@@ -54,7 +54,7 @@ export default function ConfessionPage() {
   );
 
   const renderSearchResults = () => (
-    <div className="grid gap-6 md:grid-cols-1 lg:grid-cols-2">
+    <div className="grid gap-6">
       {search.results
         .filter((r) => r.type === SearchResultType.ConfessionArticle)
         .map((r) => {
@@ -90,7 +90,7 @@ export default function ConfessionPage() {
               Capítulo {chapter.number}: {chapter.title}
             </h2>
 
-            <div className="grid gap-6 md:grid-cols-1 lg:grid-cols-2">
+            <div className="grid gap-6">
               {chapter.articles.map((article) => (
                 <ContentCard
                   key={article.id}
