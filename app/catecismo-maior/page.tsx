@@ -7,10 +7,9 @@ import ContentCard from '@/components/ui/ContentCard';
 import { useProgress } from '@/hooks/useProgress';
 import { useLargerCatechism } from '@/hooks/useLargerCatechism';
 import { useDocumentsSearch } from '@/hooks/useDocumentsSearch';
-import { useAuth } from '@/contexts/AuthProvider';
 import { Skeleton } from '@/components/ui/skeleton';
 import PaginationControls from '@/components/ui/PaginationControls';
-import { CatechismQuestion, SearchDocumentType, SearchResultType } from '@/types';
+import { SearchDocumentType, SearchResultType } from '@/types';
 
 const PAGE_SIZE = 10;
 
@@ -19,9 +18,7 @@ export default function LargerCatechismPage() {
   const [currentPage, setCurrentPage] = useState(1);
   const isSearching = searchQuery.trim().length >= 2;
 
-  const { progress, toggleLargerCatechism, isLoading } = useProgress();
-  const { user } = useAuth();
-  const resumeKey = user ? `catechumenon:resume:largerCatechism:${user.id}` : null;
+  const { progress, resume, toggleLargerCatechism, isLoading } = useProgress();
 
   const [resumeTargetPage, setResumeTargetPage] = useState<number | null>(null);
   const hasRestoredRef = useRef(false);
@@ -44,31 +41,21 @@ export default function LargerCatechismPage() {
   const total = isSearching ? search.total : list.total;
   const totalPages = Math.ceil(total / PAGE_SIZE);
 
-  // Ao carregar, retoma na página da paginação que contém o próximo item não lido.
-  // O marcador em localStorage guarda o conjunto de `number`s já lidos.
   useEffect(() => {
-    if (hasRestoredRef.current || !resumeKey || isSearching) return;
+    if (hasRestoredRef.current || isSearching) return;
     if (isLoading || list.isLoading || total === 0) return;
 
     hasRestoredRef.current = true;
 
-    let furthest = 0;
-    try {
-      const raw = window.localStorage.getItem(resumeKey);
-      const parsed = raw ? JSON.parse(raw) : [];
-      const numbers = Array.isArray(parsed) ? parsed : [];
-      furthest = numbers.length ? Math.max(...numbers) : 0;
-    } catch {
-      furthest = 0;
-    }
-    if (furthest <= 0) return; // nada lido ainda — mantém a página 1
+    const next = resume.largerCatechism;
+    if (!next) return; 
 
-    const targetPage = Math.min(Math.ceil((furthest + 1) / PAGE_SIZE), totalPages);
+    const targetPage = Math.min(Math.ceil(next.number / PAGE_SIZE), totalPages);
     setResumeTargetPage(targetPage);
     if (targetPage !== currentPage) setCurrentPage(targetPage);
-  }, [resumeKey, isSearching, isLoading, list.isLoading, total, totalPages, currentPage]);
+  }, [isSearching, isLoading, list.isLoading, total, totalPages, currentPage, resume.largerCatechism]);
 
-  // Depois que a página-alvo carrega, rola até o primeiro card ainda não concluído.
+  // Depois que a página-alvo carrega, rola até o item não lido.
   useEffect(() => {
     if (resumeTargetPage === null || hasScrolledRef.current) return;
     if (isSearching || currentPage !== resumeTargetPage) return;
@@ -79,29 +66,13 @@ export default function LargerCatechismPage() {
     if (Math.ceil(list.items[0].number / PAGE_SIZE) !== resumeTargetPage) return;
 
     hasScrolledRef.current = true;
-    const firstUnread = list.items.find(
-      (q) => !progress.largerCatechism.includes(q.id),
-    );
-    if (firstUnread) {
-      const el = document.getElementById(`q-${firstUnread.number}`);
+    const next = resume.largerCatechism; // Garante que os itens em tela já são os da página-alvo (evita a página
+    // anterior, ainda em cache, durante a troca de página).
+    if (next) {
+      const el = document.getElementById(`q-${next.number}`);
       el?.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
-  }, [resumeTargetPage, currentPage, isSearching, list.isLoading, list.items, progress.largerCatechism]);
-
-  const handleMarkRead = (question: CatechismQuestion, read: boolean) => {
-    toggleLargerCatechism(question.id);
-    if (!resumeKey) return;
-    try {
-      const raw = window.localStorage.getItem(resumeKey);
-      const parsed = raw ? JSON.parse(raw) : [];
-      const set = new Set<number>(Array.isArray(parsed) ? parsed : []);
-      if (read) set.add(question.number);
-      else set.delete(question.number);
-      window.localStorage.setItem(resumeKey, JSON.stringify(Array.from(set)));
-    } catch {
-      // ignora erros de storage (modo privado, quota, etc.)
-    }
-  };
+  }, [resumeTargetPage, currentPage, isSearching, list.isLoading, list.items, resume.largerCatechism]);
 
   const renderSkeletons = () => (
     <div className="grid gap-6">
@@ -137,7 +108,7 @@ export default function LargerCatechismPage() {
           content={question.answer}
           references={question.bibleRefs}
           isCompleted={progress.largerCatechism.includes(question.id)}
-          onMarkAsRead={(read) => handleMarkRead(question, read)}
+          onMarkAsRead={() => toggleLargerCatechism(question.id)}
           searchQuery={searchQuery}
         />
       </div>
