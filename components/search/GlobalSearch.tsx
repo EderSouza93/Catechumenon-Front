@@ -12,116 +12,105 @@ import {
   CommandItem,
 } from '@/components/ui/command';
 import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog';
-import confessionData from '@/data/confession.json';
-import largerCatechismData from '@/data/larger-catechism.json';
-import shorterCatechismData from '@/data/shorter-catechism.json';
-
-type LegacyConfessionChapter = {
-  id: number;
-  title: string;
-  articles: Array<{ id: number; text: string }>;
-};
-type LegacyCatechismQuestion = {
-  id: number;
-  question: string;
-  answer: string;
-};
+import { useGlobalSearch } from '@/hooks/useGlobalSearch';
+import { SearchResultType, type UnifiedSearchItem } from '@/types';
 
 interface GlobalSearchProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
 }
 
-interface SearchResult {
-  id: string;
-  title: string;
-  subtitle: string;
-  href: string;
+const MAX_RESULTS_PER_GROUP = 8;
+
+function resultTitle(item: UnifiedSearchItem): string {
+  if (item.title) return item.title;
+  if (item.type === SearchResultType.ConfessionArticle) {
+    const ref = item.ref;
+    return ref ? `Confissão ${ref.chapterNumber}.${ref.articleNumber}` : 'Confissão';
+  }
+  const ref = item.ref;
+  return ref ? `Pergunta ${ref.number}` : 'Pergunta';
 }
 
-const MAX_RESULTS_PER_GROUP = 8;
+function hrefForItem(item: UnifiedSearchItem): string {
+  if (item.type === SearchResultType.ConfessionArticle) {
+    return item.ref
+      ? `/confissao?chapter=${item.ref.chapterNumber}&article=${item.id}`
+      : '/confissao';
+  }
+  const base =
+    item.type === SearchResultType.LargerCatechism ? '/catecismo-maior' : '/catecismo-menor';
+  return item.ref ? `${base}?question=${item.ref.number}` : base;
+}
 
 export default function GlobalSearch({ open, onOpenChange }: GlobalSearchProps) {
   const [query, setQuery] = useState('');
+  const [debounced, setDebounced] = useState('');
   const router = useRouter();
 
-  const confession = confessionData as unknown as LegacyConfessionChapter[];
-  const largerCatechism = largerCatechismData as unknown as LegacyCatechismQuestion[];
-  const shorterCatechism = shorterCatechismData as unknown as LegacyCatechismQuestion[];
-
   useEffect(() => {
-    if (!open) setQuery('');
+    if (!open) {
+      setQuery('');
+      setDebounced('');
+    }
   }, [open]);
 
-  const results = useMemo(() => {
-    const q = query.trim().toLowerCase();
-    if (!q) return { confession: [], larger: [], shorter: [] };
+  useEffect(() => {
+    const id = setTimeout(() => setDebounced(query), 250);
+    return () => clearTimeout(id);
+  }, [query]);
 
-    const confessionResults: SearchResult[] = [];
-    for (const chapter of confession) {
-      if (confessionResults.length >= MAX_RESULTS_PER_GROUP) break;
-      const titleMatch = chapter.title.toLowerCase().includes(q);
-      const matchingArticle = chapter.articles.find((a) =>
-        a.text.toLowerCase().includes(q)
-      );
-      if (titleMatch || matchingArticle) {
-        confessionResults.push({
-          id: `conf-${chapter.id}`,
-          title: `Capítulo ${chapter.id}: ${chapter.title}`,
-          subtitle: matchingArticle
-            ? matchingArticle.text.substring(0, 100) + '...'
-            : chapter.articles[0]?.text.substring(0, 100) + '...',
-          href: '/confissao',
-        });
-      }
+  const { results } = useGlobalSearch({
+    q: debounced,
+    limit: 24,
+    enabled: open && debounced.trim().length >= 2,
+  });
+
+  const grouped = useMemo(() => {
+    const confession: UnifiedSearchItem[] = [];
+    const larger: UnifiedSearchItem[] = [];
+    const shorter: UnifiedSearchItem[] = [];
+    for (const item of results) {
+      if (item.type === SearchResultType.ConfessionArticle) confession.push(item);
+      else if (item.type === SearchResultType.LargerCatechism) larger.push(item);
+      else shorter.push(item);
     }
-
-    const largerResults: SearchResult[] = [];
-    for (const item of largerCatechism) {
-      if (largerResults.length >= MAX_RESULTS_PER_GROUP) break;
-      const questionMatch = item.question.toLowerCase().includes(q);
-      const answerMatch = item.answer.toLowerCase().includes(q);
-      if (questionMatch || answerMatch) {
-        largerResults.push({
-          id: `lc-${item.id}`,
-          title: `Pergunta ${item.id}`,
-          subtitle: item.question.substring(0, 100) + (item.question.length > 100 ? '...' : ''),
-          href: '/catecismo-maior',
-        });
-      }
-    }
-
-    const shorterResults: SearchResult[] = [];
-    for (const item of shorterCatechism) {
-      if (shorterResults.length >= MAX_RESULTS_PER_GROUP) break;
-      const questionMatch = item.question.toLowerCase().includes(q);
-      const answerMatch = item.answer.toLowerCase().includes(q);
-      if (questionMatch || answerMatch) {
-        shorterResults.push({
-          id: `sc-${item.id}`,
-          title: `Pergunta ${item.id}`,
-          subtitle: item.question.substring(0, 100) + (item.question.length > 100 ? '...' : ''),
-          href: '/catecismo-menor',
-        });
-      }
-    }
-
     return {
-      confession: confessionResults,
-      larger: largerResults,
-      shorter: shorterResults,
+      confession: confession.slice(0, MAX_RESULTS_PER_GROUP),
+      larger: larger.slice(0, MAX_RESULTS_PER_GROUP),
+      shorter: shorter.slice(0, MAX_RESULTS_PER_GROUP),
     };
-  }, [query, confession, largerCatechism, shorterCatechism]);
+  }, [results]);
 
   const hasResults =
-    results.confession.length > 0 ||
-    results.larger.length > 0 ||
-    results.shorter.length > 0;
+    grouped.confession.length > 0 ||
+    grouped.larger.length > 0 ||
+    grouped.shorter.length > 0;
 
-  const handleSelect = (href: string) => {
+  const handleSelect = (item: UnifiedSearchItem) => {
     onOpenChange(false);
-    router.push(href);
+    router.push(hrefForItem(item));
   };
+
+  const renderItem = (item: UnifiedSearchItem) => (
+    <CommandItem
+      key={item.id}
+      value={item.id}
+      onSelect={() => handleSelect(item)}
+    >
+      {item.type === SearchResultType.ConfessionArticle ? (
+        <Book className="mr-2 h-4 w-4 shrink-0 text-doc-confession" />
+      ) : item.type === SearchResultType.LargerCatechism ? (
+        <HelpCircle className="mr-2 h-4 w-4 shrink-0 text-doc-catecismo-maior" />
+      ) : (
+        <FileText className="mr-2 h-4 w-4 shrink-0 text-doc-catecismo-menor" />
+      )}
+      <div className="flex flex-col overflow-hidden">
+        <span className="font-medium truncate">{resultTitle(item)}</span>
+        <span className="text-xs text-muted-foreground truncate">{item.snippet}</span>
+      </div>
+    </CommandItem>
+  );
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -137,67 +126,25 @@ export default function GlobalSearch({ open, onOpenChange }: GlobalSearchProps) 
             onValueChange={setQuery}
           />
           <CommandList>
-            {query.trim() && !hasResults && (
+            {query.trim().length >= 2 && !hasResults && (
               <CommandEmpty>Nenhum resultado encontrado.</CommandEmpty>
             )}
 
-            {results.confession.length > 0 && (
+            {grouped.confession.length > 0 && (
               <CommandGroup heading="Confissão de Fé">
-                {results.confession.map((item) => (
-                  <CommandItem
-                    key={item.id}
-                    value={item.id}
-                    onSelect={() => handleSelect(item.href)}
-                  >
-                    <Book className="mr-2 h-4 w-4 shrink-0 text-doc-confession" />
-                    <div className="flex flex-col overflow-hidden">
-                      <span className="font-medium truncate">{item.title}</span>
-                      <span className="text-xs text-muted-foreground truncate">
-                        {item.subtitle}
-                      </span>
-                    </div>
-                  </CommandItem>
-                ))}
+                {grouped.confession.map(renderItem)}
               </CommandGroup>
             )}
 
-            {results.larger.length > 0 && (
+            {grouped.larger.length > 0 && (
               <CommandGroup heading="Catecismo Maior">
-                {results.larger.map((item) => (
-                  <CommandItem
-                    key={item.id}
-                    value={item.id}
-                    onSelect={() => handleSelect(item.href)}
-                  >
-                    <HelpCircle className="mr-2 h-4 w-4 shrink-0 text-doc-catecismo-maior" />
-                    <div className="flex flex-col overflow-hidden">
-                      <span className="font-medium truncate">{item.title}</span>
-                      <span className="text-xs text-muted-foreground truncate">
-                        {item.subtitle}
-                      </span>
-                    </div>
-                  </CommandItem>
-                ))}
+                {grouped.larger.map(renderItem)}
               </CommandGroup>
             )}
 
-            {results.shorter.length > 0 && (
+            {grouped.shorter.length > 0 && (
               <CommandGroup heading="Catecismo Menor">
-                {results.shorter.map((item) => (
-                  <CommandItem
-                    key={item.id}
-                    value={item.id}
-                    onSelect={() => handleSelect(item.href)}
-                  >
-                    <FileText className="mr-2 h-4 w-4 shrink-0 text-doc-catecismo-menor" />
-                    <div className="flex flex-col overflow-hidden">
-                      <span className="font-medium truncate">{item.title}</span>
-                      <span className="text-xs text-muted-foreground truncate">
-                        {item.subtitle}
-                      </span>
-                    </div>
-                  </CommandItem>
-                ))}
+                {grouped.shorter.map(renderItem)}
               </CommandGroup>
             )}
           </CommandList>

@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
 import Layout from '@/components/layout/Layout';
 import SearchBar from '@/components/ui/SearchBar';
 import ContentCard from '@/components/ui/ContentCard';
@@ -17,16 +18,46 @@ const SEARCH_PAGE_SIZE = 10;
 export default function ConfessionPage() {
   const [searchQuery, setSearchQuery] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
-  const isSearching = searchQuery.trim().length >= 2;
+  const [viewingResult, setViewingResult] = useState(false);
+  const searchActive = searchQuery.trim().length >= 2;
+  const showSearchResults = searchActive && !viewingResult;
+  const preSearchRef = useRef<{ page: number; scrollY: number } | null>(null);
 
   const { progress, resume, toggleConfessionArticle, isLoading } = useProgress();
+
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const deepLinkChapter = searchParams.get('chapter');
+  const deepLinkArticle = searchParams.get('article');
+  const lastDeepLinkRef = useRef<string | null>(null);
+  const restoringRef = useRef(false);
 
   const [resumeTargetPage, setResumeTargetPage] = useState<number | null>(null);
   const hasRestoredRef = useRef(false);
   const hasScrolledRef = useRef(false);
 
+  const handleSearchInput = (q: string) => {
+    const active = q.trim().length >= 2;
+    if (active && !searchActive) {
+      preSearchRef.current = { page: currentPage, scrollY: window.scrollY };
+    }
+    setViewingResult(false);
+    setSearchQuery(q);
+    if (active) {
+      setCurrentPage(1);
+    } else if (searchActive) {
+      const prev = preSearchRef.current;
+      restoringRef.current = true;
+      hasRestoredRef.current = true;
+      if (deepLinkChapter) router.replace('/confissao');
+      setCurrentPage(prev?.page ?? 1);
+      if (prev) requestAnimationFrame(() => window.scrollTo({ top: prev.scrollY }));
+      preSearchRef.current = null;
+    }
+  };
+
   const list = useConfession({
-    page: isSearching ? 1 : currentPage,
+    page: showSearchResults ? 1 : currentPage,
     limit: PAGE_SIZE,
   });
   const search = useDocumentsSearch({
@@ -34,17 +65,46 @@ export default function ConfessionPage() {
     type: SearchDocumentType.Confession,
     page: currentPage,
     limit: SEARCH_PAGE_SIZE,
-    enabled: isSearching,
+    enabled: searchActive,
   });
 
-  const isFetching = isSearching ? search.isLoading : list.isLoading;
-  const fetchError = isSearching ? search.isError : list.isError;
-  const total = isSearching ? search.total : list.total;
-  const pageSize = isSearching ? SEARCH_PAGE_SIZE : PAGE_SIZE;
+  const isFetching = showSearchResults ? search.isLoading : list.isLoading;
+  const fetchError = showSearchResults ? search.isError : list.isError;
+  const total = showSearchResults ? search.total : list.total;
+  const pageSize = showSearchResults ? SEARCH_PAGE_SIZE : PAGE_SIZE;
   const totalPages = Math.ceil(total / pageSize);
 
+  // Navegação via busca global: abre o capítulo e rola até o artigo da URL.
   useEffect(() => {
-    if (hasRestoredRef.current || isSearching) return;
+    if (restoringRef.current) {
+      if (!deepLinkChapter) restoringRef.current = false;
+      return;
+    }
+    if (!deepLinkChapter || showSearchResults) return;
+    if (list.isLoading || total === 0) return;
+    const chapterNumber = Number(deepLinkChapter);
+    if (!Number.isFinite(chapterNumber) || chapterNumber <= 0) return;
+
+    const targetPage = Math.min(chapterNumber, totalPages);
+    if (targetPage !== currentPage) {
+      setCurrentPage(targetPage);
+      return;
+    }
+    const chapter = list.items[0];
+    if (!chapter || chapter.number !== targetPage) return;
+    if (lastDeepLinkRef.current === deepLinkArticle) return;
+
+    lastDeepLinkRef.current = deepLinkArticle;
+    if (deepLinkArticle) {
+      document
+        .getElementById(`a-${deepLinkArticle}`)
+        ?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  }, [deepLinkChapter, deepLinkArticle, showSearchResults, list.isLoading, list.items, total, totalPages, currentPage]);
+
+  useEffect(() => {
+    if (deepLinkChapter) return;
+    if (hasRestoredRef.current || searchActive) return;
     if (isLoading || list.isLoading || total === 0) return;
 
     hasRestoredRef.current = true;
@@ -55,11 +115,11 @@ export default function ConfessionPage() {
     const targetPage = Math.min(next.chapterNumber, totalPages);
     setResumeTargetPage(targetPage);
     if (targetPage !== currentPage) setCurrentPage(targetPage);
-  }, [isSearching, isLoading, list.isLoading, total, totalPages, currentPage, resume.confession]);
+  }, [deepLinkChapter, searchActive, isLoading, list.isLoading, total, totalPages, currentPage, resume.confession]);
 
   useEffect(() => {
     if (resumeTargetPage === null || hasScrolledRef.current) return;
-    if (isSearching || currentPage !== resumeTargetPage) return;
+    if (searchActive || currentPage !== resumeTargetPage) return;
     if (list.isLoading || list.items.length === 0) return;
 
     const chapter = list.items[0];
@@ -71,7 +131,7 @@ export default function ConfessionPage() {
       const el = document.getElementById(`a-${next.articleId}`);
       el?.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
-  }, [resumeTargetPage, currentPage, isSearching, list.isLoading, list.items, resume.confession]);
+  }, [resumeTargetPage, currentPage, searchActive, list.isLoading, list.items, resume.confession]);
 
   const renderSkeletons = () => (
     <div className="space-y-8">
@@ -100,6 +160,10 @@ export default function ConfessionPage() {
               content={r.snippet}
               isCompleted={progress.confessionArticles.includes(r.id)}
               onMarkAsRead={() => toggleConfessionArticle(r.id)}
+              onClick={() => {
+                setViewingResult(true);
+                router.push(`/confissao?chapter=${r.chapterNumber}&article=${r.id}`);
+              }}
               searchQuery={searchQuery}
             />
           );
@@ -175,7 +239,7 @@ export default function ConfessionPage() {
 
           <div className="max-w-md mx-auto">
             <SearchBar
-              onSearch={(q) => { setSearchQuery(q); setCurrentPage(1); }}
+              onSearch={handleSearchInput}
               placeholder="Buscar na Confissão de Fé..."
               value={searchQuery}
             />
@@ -190,7 +254,7 @@ export default function ConfessionPage() {
           </div>
         ) : (
           <>
-            {isSearching ? renderSearchResults() : renderList()}
+            {showSearchResults ? renderSearchResults() : renderList()}
 
             {total > 0 && (
               <PaginationControls
@@ -200,7 +264,7 @@ export default function ConfessionPage() {
               />
             )}
 
-            {total === 0 && isSearching && (
+            {total === 0 && showSearchResults && (
               <div className="text-center py-12">
                 <p className="text-muted-foreground font-body">
                   Nenhum resultado encontrado para &quot;{searchQuery}&quot;.
