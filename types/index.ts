@@ -97,6 +97,36 @@ export interface SearchResult {
   results: SearchResultItem[];
 }
 
+export enum SearchSource {
+  Documents = 'documents',
+}
+
+interface UnifiedSearchItemBase {
+  source: SearchSource;
+  id: string;
+  title?: string;
+  snippet: string;
+  rank: number;
+}
+
+export type UnifiedSearchItem =
+  | (UnifiedSearchItemBase & {
+      type: SearchResultType.ConfessionArticle;
+      ref?: { chapterNumber: number; articleNumber: number };
+    })
+  | (UnifiedSearchItemBase & {
+      type: SearchResultType.LargerCatechism | SearchResultType.ShorterCatechism;
+      ref?: { number: number };
+    });
+
+export interface GlobalSearchResult {
+  query: string;
+  total: number;
+  page: number;
+  limit: number;
+  results: UnifiedSearchItem[];
+}
+
 export interface User {
   id: string;
   name: string;

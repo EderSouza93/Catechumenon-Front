@@ -1,8 +1,8 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { useMemo, useState } from 'react';
-import { Button } from "@/components/ui/button";
+import { Button } from '@/components/ui/button';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { useMemo, useState } from 'react';
 import { bibleClient } from '@/services/bibleClient';
 import HighlightText from '@/components/ui/HighlightText';
 
@@ -20,6 +20,7 @@ interface ContentCardProps {
   references?: string[];
   isCompleted?: boolean;
   onMarkAsRead?: (read: boolean) => void;
+  onClick?: () => void;
   searchQuery?: string;
 }
 
@@ -57,17 +58,17 @@ function SectionGrid({ section }: { section: Section }) {
 }
 
 const ReferencePopover = ({ reference }: { reference: string }) => {
-  const [content, setContent] = useState<string | null>("Carregando...");
+  const [content, setContent] = useState<string | null>('Carregando...');
   const [isOpen, setIsOpen] = useState(false);
 
   const fetchVerse = async () => {
-    if (content !== "Carregando...") return;
+    if (content !== 'Carregando...') return;
     try {
       const data = await bibleClient.getReference(reference);
       if (data.text) {
         setContent(data.text.trim());
       } else {
-        setContent("O texto para esta referência não foi encontrado.");
+        setContent('O texto para esta referência não foi encontrado.');
       }
     } catch (error) {
       console.error(`Erro ao buscar a referência "${reference}":`, error);
@@ -107,7 +108,6 @@ const ReferencePopover = ({ reference }: { reference: string }) => {
   );
 };
 
-
 export default function ContentCard({
   title,
   content,
@@ -116,6 +116,7 @@ export default function ContentCard({
   references,
   isCompleted = false,
   onMarkAsRead,
+  onClick,
   searchQuery = '',
 }: ContentCardProps) {
   const [read, setRead] = useState(isCompleted);
@@ -151,9 +152,22 @@ export default function ContentCard({
 
   return (
     <Card
+      onClick={onClick}
+      role={onClick ? 'button' : undefined}
+      tabIndex={onClick ? 0 : undefined}
+      onKeyDown={
+        onClick
+          ? (e) => {
+              if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                onClick();
+              }
+            }
+          : undefined
+      }
       className={`transition-all duration-200 hover:shadow-warm-lg ${
-        read ? 'ring-2 ring-primary/30 bg-primary/5 dark:bg-primary/10' : ''
-      }`}
+        onClick ? 'cursor-pointer hover:border-primary/40' : ''
+      } ${read ? 'ring-2 ring-primary/30 bg-primary/5 dark:bg-primary/10' : ''}`}
     >
       <CardHeader className="pb-3">
         <div className="flex items-start justify-between gap-3">
@@ -169,7 +183,10 @@ export default function ContentCard({
           </div>
           <button
             type="button"
-            onClick={handleToggleRead}
+            onClick={(e) => {
+              e.stopPropagation();
+              handleToggleRead();
+            }}
             aria-pressed={read}
             aria-label={read ? 'Desmarcar como lido' : 'Marcar como lido'}
             className="shrink-0 rounded-full focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
