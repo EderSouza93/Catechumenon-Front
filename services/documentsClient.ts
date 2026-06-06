@@ -1,13 +1,16 @@
-import type {
-  CatechismQuestion,
-  ConfessionChapter,
-  PaginatedResult,
-  SearchDocumentType,
-  SearchResult,
+import {
+  type CatechismQuestion,
+  type ConfessionChapter,
+  type GlobalSearchResult,
+  type PaginatedResult,
+  type SearchDocumentType,
+  type SearchResult,
+  SearchSource,
 } from '@/types';
 
 type PageParams = { page?: number; limit?: number };
 type SearchParams = PageParams & { q: string; type?: SearchDocumentType };
+type GlobalSearchParams = PageParams & { q: string; source?: SearchSource };
 
 function buildQuery(params: Record<string, string | number | undefined>): string {
   const qs = new URLSearchParams();
@@ -43,5 +46,11 @@ export const documentsClient = {
 
   searchDocuments(params: SearchParams): Promise<SearchResult> {
     return getJson<SearchResult>(`/api/documents/search${buildQuery(params)}`);
+  },
+
+  searchGlobal(params: GlobalSearchParams): Promise<GlobalSearchResult> {
+    return getJson<GlobalSearchResult>(
+      `/api/search${buildQuery({ ...params, source: params.source ?? SearchSource.Documents })}`,
+    );
   },
 };

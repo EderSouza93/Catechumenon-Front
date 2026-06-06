@@ -21,4 +21,8 @@ export const documentsServices = {
   searchDocuments(searchParams: URLSearchParams, token?: string): Promise<Response> {
     return api.get(`/documents/search${buildQuery(searchParams)}`, { token });
   },
+
+  searchGlobal(searchParams: URLSearchParams, token?: string): Promise<Response> {
+    return api.get(`/search${buildQuery(searchParams)}`, { token });
+  },
 };

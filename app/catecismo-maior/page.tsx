@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
 import Layout from '@/components/layout/Layout';
 import SearchBar from '@/components/ui/SearchBar';
 import ContentCard from '@/components/ui/ContentCard';
@@ -16,16 +17,45 @@ const PAGE_SIZE = 10;
 export default function LargerCatechismPage() {
   const [searchQuery, setSearchQuery] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
-  const isSearching = searchQuery.trim().length >= 2;
+  const [viewingResult, setViewingResult] = useState(false);
+  const searchActive = searchQuery.trim().length >= 2;
+  const showSearchResults = searchActive && !viewingResult;
+  const preSearchRef = useRef<{ page: number; scrollY: number } | null>(null);
 
   const { progress, resume, toggleLargerCatechism, isLoading } = useProgress();
+
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const deepLinkQuestion = searchParams.get('question');
+  const lastDeepLinkRef = useRef<string | null>(null);
+  const restoringRef = useRef(false);
 
   const [resumeTargetPage, setResumeTargetPage] = useState<number | null>(null);
   const hasRestoredRef = useRef(false);
   const hasScrolledRef = useRef(false);
 
+  const handleSearchInput = (q: string) => {
+    const active = q.trim().length >= 2;
+    if (active && !searchActive) {
+      preSearchRef.current = { page: currentPage, scrollY: window.scrollY };
+    }
+    setViewingResult(false);
+    setSearchQuery(q);
+    if (active) {
+      setCurrentPage(1);
+    } else if (searchActive) {
+      const prev = preSearchRef.current;
+      restoringRef.current = true;
+      hasRestoredRef.current = true;
+      if (deepLinkQuestion) router.replace('/catecismo-maior');
+      setCurrentPage(prev?.page ?? 1);
+      if (prev) requestAnimationFrame(() => window.scrollTo({ top: prev.scrollY }));
+      preSearchRef.current = null;
+    }
+  };
+
   const list = useLargerCatechism({
-    page: isSearching ? 1 : currentPage,
+    page: showSearchResults ? 1 : currentPage,
     limit: PAGE_SIZE,
   });
   const search = useDocumentsSearch({
@@ -33,16 +63,43 @@ export default function LargerCatechismPage() {
     type: SearchDocumentType.Larger,
     page: currentPage,
     limit: PAGE_SIZE,
-    enabled: isSearching,
+    enabled: searchActive,
   });
 
-  const isFetching = isSearching ? search.isLoading : list.isLoading;
-  const fetchError = isSearching ? search.isError : list.isError;
-  const total = isSearching ? search.total : list.total;
+  const isFetching = showSearchResults ? search.isLoading : list.isLoading;
+  const fetchError = showSearchResults ? search.isError : list.isError;
+  const total = showSearchResults ? search.total : list.total;
   const totalPages = Math.ceil(total / PAGE_SIZE);
 
+  // Navegação via busca global: rola até a pergunta indicada na URL.
   useEffect(() => {
-    if (hasRestoredRef.current || isSearching) return;
+    if (restoringRef.current) {
+      if (!deepLinkQuestion) restoringRef.current = false;
+      return;
+    }
+    if (!deepLinkQuestion || showSearchResults) return;
+    if (list.isLoading || total === 0) return;
+    const number = Number(deepLinkQuestion);
+    if (!Number.isFinite(number) || number <= 0) return;
+
+    const targetPage = Math.min(Math.ceil(number / PAGE_SIZE), totalPages);
+    if (targetPage !== currentPage) {
+      setCurrentPage(targetPage);
+      return;
+    }
+    if (list.items.length === 0) return;
+    if (Math.ceil(list.items[0].number / PAGE_SIZE) !== targetPage) return;
+    if (lastDeepLinkRef.current === deepLinkQuestion) return;
+
+    lastDeepLinkRef.current = deepLinkQuestion;
+    document
+      .getElementById(`q-${number}`)
+      ?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }, [deepLinkQuestion, showSearchResults, list.isLoading, list.items, total, totalPages, currentPage]);
+
+  useEffect(() => {
+    if (deepLinkQuestion) return;
+    if (hasRestoredRef.current || searchActive) return;
     if (isLoading || list.isLoading || total === 0) return;
 
     hasRestoredRef.current = true;
@@ -53,12 +110,12 @@ export default function LargerCatechismPage() {
     const targetPage = Math.min(Math.ceil(next.number / PAGE_SIZE), totalPages);
     setResumeTargetPage(targetPage);
     if (targetPage !== currentPage) setCurrentPage(targetPage);
-  }, [isSearching, isLoading, list.isLoading, total, totalPages, currentPage, resume.largerCatechism]);
+  }, [deepLinkQuestion, searchActive, isLoading, list.isLoading, total, totalPages, currentPage, resume.largerCatechism]);
 
   // Depois que a página-alvo carrega, rola até o item não lido.
   useEffect(() => {
     if (resumeTargetPage === null || hasScrolledRef.current) return;
-    if (isSearching || currentPage !== resumeTargetPage) return;
+    if (searchActive || currentPage !== resumeTargetPage) return;
     if (list.isLoading || list.items.length === 0) return;
 
     // Garante que os itens em tela já são os da página-alvo (evita a página
@@ -72,7 +129,7 @@ export default function LargerCatechismPage() {
       const el = document.getElementById(`q-${next.number}`);
       el?.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
-  }, [resumeTargetPage, currentPage, isSearching, list.isLoading, list.items, resume.largerCatechism]);
+  }, [resumeTargetPage, currentPage, searchActive, list.isLoading, list.items, resume.largerCatechism]);
 
   const renderSkeletons = () => (
     <div className="grid gap-6">
@@ -83,7 +140,7 @@ export default function LargerCatechismPage() {
   );
 
   const renderCards = () => {
-    if (isSearching) {
+    if (showSearchResults) {
       return search.results
         .filter((r) => r.type === SearchResultType.LargerCatechism)
         .map((r) => {
@@ -95,6 +152,10 @@ export default function LargerCatechismPage() {
               content={r.snippet}
               isCompleted={progress.largerCatechism.includes(r.id)}
               onMarkAsRead={() => toggleLargerCatechism(r.id)}
+              onClick={() => {
+                setViewingResult(true);
+                router.push(`/catecismo-maior?question=${number}`);
+              }}
               searchQuery={searchQuery}
             />
           );
@@ -130,7 +191,7 @@ export default function LargerCatechismPage() {
 
           <div className="max-w-md mx-auto">
             <SearchBar
-              onSearch={(q) => { setSearchQuery(q); setCurrentPage(1); }}
+              onSearch={handleSearchInput}
               placeholder="Buscar no Catecismo Maior..."
               value={searchQuery}
             />
@@ -157,7 +218,7 @@ export default function LargerCatechismPage() {
               />
             )}
 
-            {total === 0 && isSearching && (
+            {total === 0 && showSearchResults && (
               <div className="text-center py-12">
                 <p className="text-muted-foreground font-body">
                   Nenhum resultado encontrado para {searchQuery}.
@@ -165,7 +226,7 @@ export default function LargerCatechismPage() {
               </div>
             )}
 
-            {!isSearching && (
+            {!showSearchResults && (
               <div className="mt-16 text-center">
                 <div className="bg-secondary rounded-lg p-8">
                   <p className="text-sm text-muted-foreground mb-4">
