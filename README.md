@@ -1,8 +1,8 @@
 # Catechumenon Front-End
 
-![Versão](https://img.shields.io/badge/version-0.4.0-blue)
+![Versão](https://img.shields.io/badge/version-0.5.0-blue)
 ![Status](https://img.shields.io/badge/status-em%20desenvolvimento-yellow)
-![Feature](https://img.shields.io/badge/feature-Backend%20NestJS%20%2B%20Progresso%20Persistente-green)
+![Feature](https://img.shields.io/badge/feature-Busca%20Global%20%2B%20Testes%20Automatizados-green)
 
 ### **[Acessar a aplicação](https://catechumenon-front.vercel.app/)**
 
@@ -24,10 +24,12 @@ O projeto nasceu como um front-end estático servindo dados de arquivos `.json` 
 - **Cadastro de Usuário:** tela `/register` com validação completa (React Hook Form + Zod) e fluxo de criação de conta.
 - **Dashboard Personalizado:** tela inicial após login com saudação, progresso de leitura por documento e acesso rápido aos conteúdos.
 - **Progresso de Leitura Persistente:** marcação por capítulo/pergunta salva no servidor, disponível em qualquer dispositivo após o login.
+- **Retomar Leitura:** o dashboard aponta o próximo item não lido de cada documento, permitindo continuar de onde parou em qualquer dispositivo.
+- **Busca Global (Ctrl+K):** command palette que consulta o endpoint de busca do back-end, com navegação direta para o resultado e deep-linking (o item buscado é destacado ao abrir o documento).
+- **Busca por Documento:** filtro de conteúdo dentro de cada documento, paginado pelo servidor.
 - **Tema Claro/Escuro:** suporte completo a dark mode via `ThemeProvider`.
 - **Interface Responsiva:** layout adaptável para desktops, tablets e dispositivos móveis.
-
-> A **busca global (Ctrl+K)** e a busca dentro dos documentos estão presentes na aplicação, mas passarão por uma refatoração no back-end (correção de bugs e melhorias de relevância) antes de serem promovidas como funcionalidade estável. Veja o [Roadmap](#roadmap).
+- **Testes Automatizados:** cobertura de unidade (hooks, services, route handlers, utils) com Vitest + MSW e testes end-to-end com Playwright. Veja [Testes](#testes).
 
 ## Tecnologias Utilizadas
 
@@ -39,6 +41,7 @@ O projeto nasceu como um front-end estático servindo dados de arquivos `.json` 
 - **Componentes UI:** [shadcn/ui](https://ui.shadcn.com/) + componentes customizados
 - **Formulários & Validação:** [React Hook Form](https://react-hook-form.com/) + [Zod](https://zod.dev/)
 - **Ícones:** [Lucide React](https://lucide.dev/)
+- **Testes:** [Vitest](https://vitest.dev/) + [Testing Library](https://testing-library.com/) + [MSW](https://mswjs.io/) (unidade) e [Playwright](https://playwright.dev/) (e2e)
 - **Hospedagem:** [Vercel](https://vercel.com/)
 
 ### Back-end (repositório privado)
@@ -64,11 +67,11 @@ Browser ──► Next.js Route Handler (/api/*) ──► Nest.js API ──►
 app/
   api/auth/          # Proxy de autenticação (login, register, logout, me)
   api/bible/         # Proxy para o endpoint /bible do back-end
-  api/documents/     # Proxy de busca global nos documentos
+  api/documents/     # Proxy de busca nos documentos
   api/progress/      # Proxy de progresso de leitura (GET/PATCH)
   api/catechism/     # Proxies paginados dos catecismos (maior/menor)
   api/confession/    # Proxy paginado da confissão
-  api/search/        # API legada de busca (será removida na refatoração)
+  api/search/        # Proxy da busca global (Ctrl+K)
   dashboard/         # Dashboard pós-login (protegido)
   login/             # Página de login
   register/          # Página de cadastro
@@ -79,18 +82,24 @@ app/
 components/
   layout/            # Navbar, Footer, Layout
   search/            # GlobalSearch (command palette)
-  ui/                # Componentes reutilizáveis (shadcn/ui + custom)
+  ui/                # Componentes reutilizáveis (shadcn/ui + custom:
+                     #   ContentCard, ProgressTracker, PaginationControls, HighlightText)
 contexts/
   AuthProvider.tsx   # Contexto de autenticação
   ThemeProvider.tsx  # Contexto de tema
 hooks/               # useConfession, useLargerCatechism, useShorterCatechism,
-                     # useDocumentsSearch, useProgress, useVerseDialog, useAuth
+                     # useGlobalSearch, useDocumentsSearch, useProgress, use-toast
 services/            # Camada de acesso ao back-end:
                      #   api.ts       → fetch base + BACKEND_API_URL
                      #   *Services.ts → chamadas server-side (route handlers)
                      #   *Client.ts   → chamadas client-side (rotas internas /api)
+utils/               # Utilitários puros (ex.: searchUtils)
+lib/                 # Helpers compartilhados (ex.: utils de classNames)
+types/               # Tipos e contratos compartilhados
 data/                # Dados estáticos remanescentes (ex.: recursos)
 middleware.ts        # Proteção de rotas autenticadas
+tests/               # Infra de testes de unidade (MSW handlers, fixtures, helpers)
+e2e/                 # Specs end-to-end do Playwright
 ```
 
 ## Decisões de Design
@@ -99,6 +108,13 @@ middleware.ts        # Proteção de rotas autenticadas
 - **Separação `*Services.ts` × `*Client.ts`:** padroniza a origem da chamada server-side (a partir de route handlers) versus client-side (a partir de hooks). A camada `api.ts` centraliza a base URL e os headers.
 - **Paginação no servidor:** documentos longos (196 perguntas do Catecismo Maior, 33 capítulos da Confissão) trafegam em páginas, não em arquivos JSON inteiros como na versão original.
 - **Hooks por domínio:** cada documento tem seu próprio hook (`useConfession`, `useLargerCatechism`, `useShorterCatechism`), isolando estado de paginação e fetch.
+
+## Testes
+
+A aplicação é coberta em dois níveis, com o back-end sempre simulado para que as suítes rodem de forma isolada e determinística:
+
+- **Unidade (Vitest + Testing Library + MSW):** hooks, services, route handlers (`app/api/*`), utils e contexts. As requisições ao back-end são interceptadas por handlers do [MSW](https://mswjs.io/) (em `tests/`). A configuração separa dois ambientes: `unit-jsdom` para código de UI/cliente e `unit-node` para os services server-side e route handlers.
+- **End-to-end (Playwright):** fluxos completos em `e2e/` — cadastro/login, navegação pelos catecismos, persistência de progresso entre sessões, busca global e dark mode —, com o back-end substituído por um mock (`e2e/mock-backend.ts`).
 
 ## Roadmap
 
@@ -112,17 +128,22 @@ middleware.ts        # Proteção de rotas autenticadas
 - [x] Migração dos JSONs para PostgreSQL via back-end Nest.js, com paginação server-side.
 - [x] Integração da Bíblia via back-end (endpoint `/bible`), eliminando utilitários client-side.
 - [x] Persistência do progresso de leitura no servidor (acesso entre dispositivos).
+- [x] Retomar leitura a partir do próximo item não lido.
+- [x] Busca global (Ctrl+K) e busca por documento integradas ao back-end, com navegação de resultados e deep-linking.
 - [x] Tema claro/escuro.
+- [x] Infraestrutura de testes de unidade (Vitest + MSW) e end-to-end (Playwright).
 
-### Em andamento / Próximos passos
+### Próximos passos
 
-- [ ] **Refatoração da busca (back-end):** correção de bugs identificados na busca global (Ctrl+K) e na busca por documento, melhorando relevância e desempenho.
 - [ ] **Anotações Pessoais:** permitir que o usuário registre anotações nos textos estudados.
 - [ ] **Melhorias de Acessibilidade:** skip navigation link (WCAG 2.4.1), foco visível consistente e refinamento de aria-labels.
 - [ ] **Menu mobile com `Sheet` do shadcn/ui:** animação, backdrop e focus trap.
 - [ ] **Scroll to top na paginação.**
 - [ ] **Padronização de linting:** ESLint + Prettier para aspas e ponto-e-vírgula uniformes.
 
-## Contribuições
+## Autor
 
-Contribuições são bem-vindas! Se você tem sugestões ou quer colaborar, abra uma *issue* para discutirmos as ideias.
+Desenvolvido por **Eder Souza** como projeto pessoal de portfólio.
+
+- [Aplicação ao vivo](https://catechumenon-front.vercel.app/)
+- [GitHub](https://github.com/EderSouza93)
